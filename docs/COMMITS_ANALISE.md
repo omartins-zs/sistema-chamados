@@ -153,3 +153,68 @@
 ```
 
 **Total de commits sugeridos: 11**
+
+---
+
+# Nova rodada — Melhorias UI/UX (08/06/2026)
+
+## Commit 12
+
+**Arquivos:** `resources/css/filament/admin/theme.css`, `vite.config.js`, `package.json`, `package-lock.json`
+
+**Análise:** Tema Filament com Tailwind 4 compilando views customizadas do painel e paleta primary `#00468a`.
+
+**Classificação:** Complexa
+
+**Commit:** `:sparkles: feat: adicionando tema Filament admin`
+
+---
+
+## Commit 13
+
+**Arquivos:** `app/Filament/Widgets/ResumoGeralChamadosWidget.php`, `ChamadosEmAtendimentoWidget.php`, `ChamadosEncerradosWidget.php`, `Concerns/FiltraChamadosPorUsuario.php`, `app/Filament/Pages/Dashboard.php`, `app/Providers/Filament/AdminPanelProvider.php`, remoção `ResumoChamadosOverview.php`
+
+**Análise:** Painel dividido em 3 blocos (Resumo Geral, Em Atendimento, Encerrados) com filtro por setor para técnicos.
+
+**Classificação:** Complexa
+
+**Commit:** `:recycle: refactor: reorganizando widgets do painel`
+
+---
+
+## Commit 14
+
+**Arquivos:** `app/Filament/Pages/Configuracoes.php`, `resources/views/filament/pages/configuracoes.blade.php`, remoção `ConfiguracoesStatsWidget.php` e `partials/configuracoes-*.blade.php`
+
+**Análise:** Página de configurações com layout unificado (hero, métricas, fila, setores e links) sem seções Filament duplicadas.
+
+**Classificação:** Complexa
+
+**Commit:** `:sparkles: feat: melhorando UI pagina configuracoes`
+
+---
+
+## Commit 15
+
+**Arquivos:** `docs/TEMPLATE_IMPORTACAO.md`, `docs/COMMITS_ANALISE.md`
+
+**Análise:** Guia de importação/clonagem do projeto e atualização da análise de commits.
+
+**Classificação:** Simples
+
+**Commit:** `:books: docs: adicionando template importacao`
+
+---
+
+## Lista final de commits (rodada 2)
+
+```text
+12. :sparkles: feat: adicionando tema Filament admin
+13. :recycle: refactor: reorganizando widgets do painel
+14. :sparkles: feat: melhorando UI pagina configuracoes
+15. :books: docs: adicionando template importacao
+```
+
+**Total de commits sugeridos (rodada 2): 4**
+
+**Total geral no repositório: 15**
