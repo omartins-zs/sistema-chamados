@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Support\CriarChamadoAcao;
 use App\Filament\Widgets\ChamadosEmAtendimentoWidget;
 use App\Filament\Widgets\ChamadosEncerradosWidget;
 use App\Filament\Widgets\ResumoGeralChamadosWidget;
@@ -26,6 +27,13 @@ class Dashboard extends BaseDashboard
             ResumoGeralChamadosWidget::class,
             ChamadosEmAtendimentoWidget::class,
             ChamadosEncerradosWidget::class,
+        ];
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CriarChamadoAcao::make(),
         ];
     }
 }
