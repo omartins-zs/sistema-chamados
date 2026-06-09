@@ -2,7 +2,9 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Widgets\ResumoChamadosOverview;
+use App\Filament\Widgets\ChamadosEmAtendimentoWidget;
+use App\Filament\Widgets\ChamadosEncerradosWidget;
+use App\Filament\Widgets\ResumoGeralChamadosWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -26,6 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->login()
             ->brandName('Sistema de Chamados')
             ->maxContentWidth(Width::Full)
@@ -37,7 +40,9 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                ResumoChamadosOverview::class,
+                ResumoGeralChamadosWidget::class,
+                ChamadosEmAtendimentoWidget::class,
+                ChamadosEncerradosWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
