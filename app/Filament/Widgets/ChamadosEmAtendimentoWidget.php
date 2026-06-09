@@ -28,6 +28,7 @@ class ChamadosEmAtendimentoWidget extends StatsOverviewWidget
             Stat::make('Aguardando Cliente', (clone $query)->where('status', StatusChamadoEnum::AGUARDANDO_CLIENTE)->count()),
             Stat::make('Aguardando Terceiros', (clone $query)->where('status', StatusChamadoEnum::AGUARDANDO_TERCEIROS)->count()),
             Stat::make('Pausados', (clone $query)->where('status', StatusChamadoEnum::PAUSADO)->count()),
+            Stat::make('Bloqueados', (clone $query)->where('status', StatusChamadoEnum::BLOQUEADO)->count()),
         ];
     }
 }

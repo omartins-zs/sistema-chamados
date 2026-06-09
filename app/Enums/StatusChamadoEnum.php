@@ -10,6 +10,7 @@ enum StatusChamadoEnum: string
     case AGUARDANDO_CLIENTE = 'aguardando_cliente';
     case AGUARDANDO_TERCEIROS = 'aguardando_terceiros';
     case PAUSADO = 'pausado';
+    case BLOQUEADO = 'bloqueado';
     case CONCLUIDO = 'concluido';
     case FINALIZADO = 'finalizado';
     case CANCELADO = 'cancelado';
@@ -23,6 +24,7 @@ enum StatusChamadoEnum: string
             self::AGUARDANDO_CLIENTE => 'Aguardando Cliente',
             self::AGUARDANDO_TERCEIROS => 'Aguardando Terceiros',
             self::PAUSADO => 'Pausado',
+            self::BLOQUEADO => 'Bloqueado',
             self::CONCLUIDO => 'Concluído',
             self::FINALIZADO => 'Finalizado',
             self::CANCELADO => 'Cancelado',
@@ -38,6 +40,7 @@ enum StatusChamadoEnum: string
             self::AGUARDANDO_CLIENTE => 'primary',
             self::AGUARDANDO_TERCEIROS => 'purple',
             self::PAUSADO => 'orange',
+            self::BLOQUEADO => 'danger',
             self::CONCLUIDO => 'success',
             self::FINALIZADO => 'success',
             self::CANCELADO => 'danger',
@@ -53,6 +56,7 @@ enum StatusChamadoEnum: string
             self::AGUARDANDO_CLIENTE => 'bg-blue-100 text-blue-800 ring-blue-200',
             self::AGUARDANDO_TERCEIROS => 'bg-violet-100 text-violet-800 ring-violet-200',
             self::PAUSADO => 'bg-orange-100 text-orange-800 ring-orange-200',
+            self::BLOQUEADO => 'bg-red-100 text-red-800 ring-red-200',
             self::CONCLUIDO => 'bg-emerald-100 text-emerald-800 ring-emerald-200',
             self::FINALIZADO => 'bg-green-100 text-green-800 ring-green-200',
             self::CANCELADO => 'bg-red-100 text-red-800 ring-red-200',

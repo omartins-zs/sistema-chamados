@@ -14,7 +14,8 @@ class EnumsTest extends TestCase
         $this->assertSame('Em Aberto', StatusChamadoEnum::EM_ABERTO->rotulo());
         $this->assertSame('Finalizado', StatusChamadoEnum::FINALIZADO->rotulo());
         $this->assertSame('Aguardando Cliente', StatusChamadoEnum::normalizar('aguardando_cliente')->rotulo());
-        $this->assertCount(9, StatusChamadoEnum::opcoes());
+        $this->assertSame('Bloqueado', StatusChamadoEnum::BLOQUEADO->rotulo());
+        $this->assertCount(10, StatusChamadoEnum::opcoes());
     }
 
     public function test_complexidade_rotulos(): void
