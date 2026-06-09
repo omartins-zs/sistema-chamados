@@ -147,12 +147,33 @@ Use esses protocolos para testar a **Consultar Chamado**.
 ## Comandos de verificação rápida
 
 ```bash
-# Testes automatizados
+# Testes PHP (157 testes, cobertura mín. 90% no CI)
 php artisan test
+composer quality          # Pint + PHPStan + testes (+ cobertura se PCOV instalado)
 
-# Qualidade
-composer quality
+# Testes frontend (Vitest, cobertura mín. 90% do JS público)
+npm run test:frontend
+npm run test:frontend:coverage
 
-# Status Laravel
-php artisan about
+# Testes E2E no browser (2 projetos Playwright: public + admin)
+# Requer servidor local já rodando (php artisan serve) com banco seedado
+npm run test:e2e
+npm run test:e2e:public   # área pública
+npm run test:e2e:admin     # painel Filament
+
+# Tudo JS (frontend + browser)
+npm run test:js:all
+
+# Playwright UI mode (debug)
+npm run test:e2e:ui
 ```
+
+### Variáveis úteis (Playwright)
+
+| Variável | Padrão | Uso |
+| --- | --- | --- |
+| `PLAYWRIGHT_BASE_URL` | `http://127.0.0.1:8000` | URL do app local (Laragon, artisan serve, Docker) |
+| `PLAYWRIGHT_ADMIN_EMAIL` | `admin@admin.com` | Login admin nos testes |
+| `PLAYWRIGHT_ADMIN_PASSWORD` | `password` | Senha admin nos testes |
+
+No CI, o Playwright sobe automaticamente um servidor de teste com SQLite (`scripts/e2e-server.sh`).
