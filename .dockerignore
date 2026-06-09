@@ -1,0 +1,17 @@
+.git
+.github
+node_modules
+vendor
+.env
+.env.*
+!.env.docker.example
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+bootstrap/cache/*
+.phpunit.result.cache
+tests
+docs
+*.md
+!README.md
