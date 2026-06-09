@@ -16,7 +16,7 @@
     <div class="mt-8 space-y-4 rounded-xl bg-slate-50 p-6 text-left">
         <div>
             <p class="text-sm text-slate-500">Protocolo</p>
-            <p class="text-xl font-bold text-primary-600">{{ $chamado->protocolo }}</p>
+            <p class="text-xl font-bold text-primary-600" data-testid="protocolo-chamado">{{ $chamado->protocolo }}</p>
         </div>
         <div>
             <p class="text-sm text-slate-500">Solicitante</p>

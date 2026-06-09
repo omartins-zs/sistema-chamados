@@ -67,7 +67,7 @@
         </div>
 
         <div class="flex flex-col-reverse gap-3 pt-4 sm:flex-row sm:justify-end">
-            <button type="submit" class="w-full rounded-lg bg-primary-500 px-6 py-3 font-medium text-white hover:bg-primary-600 focus:ring-4 focus:ring-primary-300 sm:w-auto">
+            <button type="submit" data-testid="btn-abrir-chamado" class="w-full rounded-lg bg-primary-500 px-6 py-3 font-medium text-white hover:bg-primary-600 focus:ring-4 focus:ring-primary-300 sm:w-auto">
                 Abrir Chamado
             </button>
         </div>

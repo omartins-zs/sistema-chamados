@@ -25,7 +25,7 @@
             <a href="{{ route('chamados.criar') }}" class="rounded-lg border border-slate-300 px-6 py-3 text-center font-medium text-slate-700 hover:bg-slate-50">
                 Cancelar
             </a>
-            <button type="submit" class="w-full rounded-lg bg-primary-500 px-6 py-3 font-medium text-white hover:bg-primary-600 focus:ring-4 focus:ring-primary-300 sm:w-auto">
+            <button type="submit" data-testid="btn-consultar-chamado" class="w-full rounded-lg bg-primary-500 px-6 py-3 font-medium text-white hover:bg-primary-600 focus:ring-4 focus:ring-primary-300 sm:w-auto">
                 Consultar
             </button>
         </div>
