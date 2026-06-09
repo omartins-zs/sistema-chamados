@@ -47,6 +47,23 @@ class HistoricoChamadoService
         });
     }
 
+    public function registrarFinalizacao(
+        Chamado $chamado,
+        Usuario $tecnico,
+        string $motivo,
+        string $descricao,
+    ): HistoricoChamado {
+        $this->validarSetorDoTecnico($chamado, $tecnico);
+
+        return HistoricoChamado::query()->create([
+            'chamado_id' => $chamado->id,
+            'tecnico_id' => $tecnico->id,
+            'status' => StatusChamadoEnum::FINALIZADO,
+            'descricao' => "Motivo da finalização: {$motivo}\n\n{$descricao}",
+            'visivel_solicitante' => true,
+        ]);
+    }
+
     public function assumirChamado(Chamado $chamado, Usuario $tecnico): Chamado
     {
         $this->validarSetorDoTecnico($chamado, $tecnico);

@@ -10,10 +10,12 @@ use App\Services\ChamadoService;
 use Database\Seeders\SetorSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
+use Tests\Concerns\DadosFinalizacaoChamado;
 use Tests\TestCase;
 
 class AvaliacaoChamadoServiceTest extends TestCase
 {
+    use DadosFinalizacaoChamado;
     use RefreshDatabase;
 
     private AvaliacaoChamadoService $service;
@@ -44,7 +46,9 @@ class AvaliacaoChamadoServiceTest extends TestCase
     {
         Queue::fake();
 
-        $chamado = app(ChamadoService::class)->finalizar(Chamado::factory()->create());
+        $chamado = Chamado::factory()->create();
+        $tecnico = $this->tecnicoDoChamado($chamado);
+        $chamado = app(ChamadoService::class)->finalizar($chamado, $tecnico, $this->dadosFinalizacaoChamado());
 
         $avaliacao = $this->service->criar($chamado, $chamado->token_avaliacao, [
             'nota_satisfacao' => 3,
@@ -59,7 +63,9 @@ class AvaliacaoChamadoServiceTest extends TestCase
     {
         Queue::fake();
 
-        $chamado = app(ChamadoService::class)->finalizar(Chamado::factory()->create());
+        $chamado = Chamado::factory()->create();
+        $tecnico = $this->tecnicoDoChamado($chamado);
+        $chamado = app(ChamadoService::class)->finalizar($chamado, $tecnico, $this->dadosFinalizacaoChamado());
 
         $this->service->criar($chamado, $chamado->token_avaliacao, [
             'nota_satisfacao' => 5,

@@ -6,6 +6,7 @@ use App\Enums\ComplexidadeChamadoEnum;
 use App\Enums\StatusChamadoEnum;
 use App\Filament\Resources\Chamados\Pages\ListChamados;
 use App\Filament\Resources\Chamados\Pages\ViewChamado;
+use App\Filament\Support\FinalizarChamadoFormulario;
 use App\Models\Chamado;
 use App\Models\Usuario;
 use App\Services\ChamadoService;
@@ -183,12 +184,12 @@ class ChamadoResource extends Resource
                     ->label('Finalizar')
                     ->icon(Heroicon::OutlinedCheckCircle)
                     ->color('success')
-                    ->requiresConfirmation()
                     ->modalHeading('Finalizar chamado')
-                    ->modalDescription('O solicitante receberá um e-mail com link para avaliação.')
+                    ->modalDescription('Informe o motivo e o texto da finalização. O solicitante receberá um e-mail com link para avaliação.')
+                    ->schema(FinalizarChamadoFormulario::campos())
                     ->visible(fn (Chamado $record): bool => auth()->user()->can('finalizar', $record) && $record->status !== StatusChamadoEnum::FINALIZADO)
-                    ->action(function (Chamado $record): void {
-                        app(ChamadoService::class)->finalizar($record);
+                    ->action(function (Chamado $record, array $data): void {
+                        app(ChamadoService::class)->finalizar($record, auth()->user(), $data);
                     }),
             ]);
     }

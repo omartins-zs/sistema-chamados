@@ -3,16 +3,21 @@
 namespace App\Services;
 
 use App\Enums\StatusChamadoEnum;
+use App\Http\Requests\FinalizarChamadoRequest;
 use App\Jobs\EnviarEmailChamadoCriadoJob;
 use App\Jobs\EnviarEmailChamadoFinalizadoJob;
 use App\Models\Chamado;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class ChamadoService
 {
     public function __construct(
         private readonly NotificacaoChamadoService $notificacaoChamadoService,
+        private readonly HistoricoChamadoService $historicoChamadoService,
     ) {}
 
     /**
@@ -66,9 +71,27 @@ class ChamadoService
         return $chamado->refresh();
     }
 
-    public function finalizar(Chamado $chamado): Chamado
+    /**
+     * @param  array{motivo: string, descricao: string}  $dados
+     */
+    public function finalizar(Chamado $chamado, Usuario $tecnico, array $dados): Chamado
     {
-        return DB::transaction(function () use ($chamado): Chamado {
+        $validador = Validator::make($dados, (new FinalizarChamadoRequest)->rules(), (new FinalizarChamadoRequest)->messages());
+
+        if ($validador->fails()) {
+            throw new ValidationException($validador);
+        }
+
+        $motivo = trim($dados['motivo']);
+        $descricao = trim($dados['descricao']);
+
+        return DB::transaction(function () use ($chamado, $tecnico, $motivo, $descricao): Chamado {
+            if ($chamado->status === StatusChamadoEnum::FINALIZADO) {
+                throw ValidationException::withMessages([
+                    'status' => 'Este chamado já está finalizado.',
+                ]);
+            }
+
             $token = $this->gerarTokenAvaliacao();
 
             $chamado->update([
@@ -77,6 +100,13 @@ class ChamadoService
                 'token_avaliacao' => $token,
                 'expira_token_avaliacao_em' => now()->addDays(30),
             ]);
+
+            $this->historicoChamadoService->registrarFinalizacao(
+                $chamado->refresh(),
+                $tecnico,
+                $motivo,
+                $descricao,
+            );
 
             EnviarEmailChamadoFinalizadoJob::dispatch($chamado->refresh());
 

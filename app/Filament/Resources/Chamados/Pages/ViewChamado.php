@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Chamados\Pages;
 
 use App\Enums\StatusChamadoEnum;
 use App\Filament\Resources\Chamados\ChamadoResource;
+use App\Filament\Support\FinalizarChamadoFormulario;
 use App\Models\Chamado;
 use App\Services\ChamadoService;
 use App\Services\HistoricoChamadoService;
@@ -71,11 +72,13 @@ class ViewChamado extends ViewRecord
                 ->label('Finalizar Chamado')
                 ->icon(Heroicon::OutlinedCheckCircle)
                 ->color('success')
-                ->requiresConfirmation()
+                ->modalHeading('Finalizar chamado')
+                ->modalDescription('Informe o motivo e o texto da finalização. O registro será adicionado ao histórico e o solicitante receberá o link de avaliação.')
+                ->schema(FinalizarChamadoFormulario::campos())
                 ->visible(fn (): bool => $this->getRecord()->status !== StatusChamadoEnum::FINALIZADO
                     && auth()->user()->can('finalizar', $this->getRecord()))
-                ->action(function (): void {
-                    app(ChamadoService::class)->finalizar($this->getRecord());
+                ->action(function (array $data): void {
+                    app(ChamadoService::class)->finalizar($this->getRecord(), auth()->user(), $data);
                     $this->recarregarChamado();
                 }),
         ];

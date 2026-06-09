@@ -11,10 +11,12 @@ use App\Services\ChamadoService;
 use Database\Seeders\SetorSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
+use Tests\Concerns\DadosFinalizacaoChamado;
 use Tests\TestCase;
 
 class AvaliacaoChamadoTest extends TestCase
 {
+    use DadosFinalizacaoChamado;
     use RefreshDatabase;
 
     private AvaliacaoChamadoService $service;
@@ -111,7 +113,8 @@ class AvaliacaoChamadoTest extends TestCase
     private function criarChamadoFinalizado(): Chamado
     {
         $chamado = Chamado::factory()->create();
+        $tecnico = $this->tecnicoDoChamado($chamado);
 
-        return app(ChamadoService::class)->finalizar($chamado);
+        return app(ChamadoService::class)->finalizar($chamado, $tecnico, $this->dadosFinalizacaoChamado());
     }
 }

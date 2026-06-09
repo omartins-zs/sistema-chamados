@@ -11,10 +11,13 @@ use App\Services\ChamadoService;
 use Database\Seeders\SetorSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Validation\ValidationException;
+use Tests\Concerns\DadosFinalizacaoChamado;
 use Tests\TestCase;
 
 class FinalizacaoChamadoTest extends TestCase
 {
+    use DadosFinalizacaoChamado;
     use RefreshDatabase;
 
     private ChamadoService $service;
@@ -38,7 +41,7 @@ class FinalizacaoChamadoTest extends TestCase
             'tecnico_responsavel_id' => $tecnico->id,
         ]);
 
-        $resultado = $this->service->finalizar($chamado);
+        $resultado = $this->service->finalizar($chamado, $tecnico, $this->dadosFinalizacaoChamado());
 
         $this->assertSame(StatusChamadoEnum::FINALIZADO, $resultado->status);
     }
@@ -48,8 +51,9 @@ class FinalizacaoChamadoTest extends TestCase
         Queue::fake();
 
         $chamado = Chamado::factory()->create();
+        $tecnico = $this->tecnicoDoChamado($chamado);
 
-        $resultado = $this->service->finalizar($chamado);
+        $resultado = $this->service->finalizar($chamado, $tecnico, $this->dadosFinalizacaoChamado());
 
         $this->assertNotNull($resultado->finalizado_em);
     }
@@ -59,8 +63,9 @@ class FinalizacaoChamadoTest extends TestCase
         Queue::fake();
 
         $chamado = Chamado::factory()->create();
+        $tecnico = $this->tecnicoDoChamado($chamado);
 
-        $resultado = $this->service->finalizar($chamado);
+        $resultado = $this->service->finalizar($chamado, $tecnico, $this->dadosFinalizacaoChamado());
 
         $this->assertNotNull($resultado->token_avaliacao);
         $this->assertNotNull($resultado->expira_token_avaliacao_em);
@@ -71,8 +76,9 @@ class FinalizacaoChamadoTest extends TestCase
         Queue::fake();
 
         $chamado = Chamado::factory()->create();
+        $tecnico = $this->tecnicoDoChamado($chamado);
 
-        $this->service->finalizar($chamado);
+        $this->service->finalizar($chamado, $tecnico, $this->dadosFinalizacaoChamado());
 
         Queue::assertPushed(EnviarEmailChamadoFinalizadoJob::class);
     }
@@ -82,10 +88,48 @@ class FinalizacaoChamadoTest extends TestCase
         Queue::fake();
 
         $chamado = Chamado::factory()->create(['status' => StatusChamadoEnum::EM_ANDAMENTO]);
+        $tecnico = $this->tecnicoDoChamado($chamado);
 
-        $this->service->finalizar($chamado);
+        $this->service->finalizar($chamado, $tecnico, $this->dadosFinalizacaoChamado());
 
         $this->assertSame(StatusChamadoEnum::FINALIZADO, $chamado->refresh()->status);
+    }
+
+    public function test_finalizacao_registra_historico_com_motivo_e_texto(): void
+    {
+        Queue::fake();
+
+        $chamado = Chamado::factory()->create();
+        $tecnico = $this->tecnicoDoChamado($chamado);
+        $dados = $this->dadosFinalizacaoChamado();
+
+        $this->service->finalizar($chamado, $tecnico, $dados);
+
+        $this->assertDatabaseHas('historicos_chamados', [
+            'chamado_id' => $chamado->id,
+            'tecnico_id' => $tecnico->id,
+            'status' => StatusChamadoEnum::FINALIZADO->value,
+            'visivel_solicitante' => true,
+        ]);
+
+        $historico = $chamado->historicos()->latest('id')->first();
+        $this->assertStringContainsString($dados['motivo'], $historico->descricao);
+        $this->assertStringContainsString($dados['descricao'], $historico->descricao);
+    }
+
+    public function test_finalizacao_exige_motivo_e_descricao(): void
+    {
+        Queue::fake();
+
+        $chamado = Chamado::factory()->create();
+        $tecnico = $this->tecnicoDoChamado($chamado);
+
+        $this->expectException(ValidationException::class);
+
+        $this->service->finalizar($chamado, $tecnico, [
+            'motivo' => '',
+            'descricao' => '',
+        ]);
     }
 
     public function test_gerar_protocolo_sequencial(): void
