@@ -218,3 +218,42 @@
 **Total de commits sugeridos (rodada 2): 4**
 
 **Total geral no repositório: 15**
+
+---
+
+# Nova rodada — Finalização e status Bloqueado
+
+## Commit 16
+
+**Arquivos:** `app/Enums/StatusChamadoEnum.php`, `app/Filament/Widgets/ChamadosEmAtendimentoWidget.php`, `tests/Unit/EnumsTest.php`
+
+**Análise:** Novo status `bloqueado` com rótulo, cores de badge e card no painel.
+
+**Classificação:** Simples
+
+**Commit:** `:sparkles: feat: adicionando status bloqueado`
+
+---
+
+## Commit 17
+
+**Arquivos:** `FinalizarChamadoRequest.php`, `FinalizarChamadoFormulario.php`, `ChamadoService.php`, `HistoricoChamadoService.php`, `ChamadoResource.php`, `ViewChamado.php`, `tests/Concerns/`, testes de finalização e avaliação
+
+**Análise:** Finalização exige motivo e texto; registro automático no histórico visível ao solicitante.
+
+**Classificação:** Complexa
+
+**Commit:** `:sparkles: feat: exigindo motivo na finalizacao`
+
+---
+
+## Lista final de commits (rodada 3)
+
+```text
+16. :sparkles: feat: adicionando status bloqueado
+17. :sparkles: feat: exigindo motivo na finalizacao
+```
+
+**Total de commits sugeridos (rodada 3): 2**
+
+**Total geral no repositório: 17**
