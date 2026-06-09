@@ -93,4 +93,56 @@ class PermissaoTest extends TestCase
 
         $this->assertFalse($this->chamadoPolicy->delete($tecnico, $chamado));
     }
+
+    public function test_view_any_chamado_sempre_permitido(): void
+    {
+        $tecnico = Usuario::factory()->tecnico()->create();
+
+        $this->assertTrue($this->chamadoPolicy->viewAny($tecnico));
+    }
+
+    public function test_apenas_admin_cria_chamado(): void
+    {
+        $admin = Usuario::factory()->administrador()->create();
+        $tecnico = Usuario::factory()->tecnico()->create();
+
+        $this->assertTrue($this->chamadoPolicy->create($admin));
+        $this->assertFalse($this->chamadoPolicy->create($tecnico));
+    }
+
+    public function test_tecnico_atualiza_e_assume_chamado_do_setor(): void
+    {
+        $setor = Setor::query()->firstOrFail();
+        $tecnico = Usuario::factory()->tecnico()->create(['setor_id' => $setor->id]);
+        $chamado = Chamado::factory()->create(['setor_id' => $setor->id]);
+
+        $this->assertTrue($this->chamadoPolicy->update($tecnico, $chamado));
+        $this->assertTrue($this->chamadoPolicy->assumir($tecnico, $chamado));
+        $this->assertTrue($this->chamadoPolicy->adicionarHistorico($tecnico, $chamado));
+    }
+
+    public function test_admin_gerencia_setores(): void
+    {
+        $admin = Usuario::factory()->administrador()->create();
+        $setor = Setor::query()->firstOrFail();
+
+        $this->assertTrue($this->setorPolicy->viewAny($admin));
+        $this->assertTrue($this->setorPolicy->view($admin, $setor));
+        $this->assertTrue($this->setorPolicy->create($admin));
+        $this->assertTrue($this->setorPolicy->update($admin, $setor));
+        $this->assertTrue($this->setorPolicy->delete($admin, $setor));
+    }
+
+    public function test_admin_gerencia_usuarios_mas_nao_exclui_a_si_mesmo(): void
+    {
+        $admin = Usuario::factory()->administrador()->create();
+        $outro = Usuario::factory()->administrador()->create();
+
+        $this->assertTrue($this->usuarioPolicy->viewAny($admin));
+        $this->assertTrue($this->usuarioPolicy->view($admin, $outro));
+        $this->assertTrue($this->usuarioPolicy->create($admin));
+        $this->assertTrue($this->usuarioPolicy->update($admin, $outro));
+        $this->assertTrue($this->usuarioPolicy->delete($admin, $outro));
+        $this->assertFalse($this->usuarioPolicy->delete($admin, $admin));
+    }
 }

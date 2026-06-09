@@ -130,4 +130,48 @@ class HistoricoChamadoTest extends TestCase
         $this->assertSame($tecnico->id, $chamado->refresh()->tecnico_responsavel_id);
         $this->assertSame(StatusChamadoEnum::ACESSADO, $chamado->status);
     }
+
+    public function test_assumir_chamado_ja_assumido_nao_altera_responsavel(): void
+    {
+        $setor = Setor::query()->firstOrFail();
+        $tecnico1 = Usuario::factory()->tecnico()->create(['setor_id' => $setor->id]);
+        $tecnico2 = Usuario::factory()->tecnico()->create(['setor_id' => $setor->id]);
+        $chamado = Chamado::factory()->create([
+            'setor_id' => $setor->id,
+            'tecnico_responsavel_id' => $tecnico1->id,
+        ]);
+
+        $this->service->assumirChamado($chamado, $tecnico2);
+
+        $this->assertSame($tecnico1->id, $chamado->refresh()->tecnico_responsavel_id);
+    }
+
+    public function test_registrar_finalizacao_valida_setor_do_tecnico(): void
+    {
+        $setores = Setor::query()->take(2)->get();
+        $tecnico = Usuario::factory()->tecnico()->create(['setor_id' => $setores[0]->id]);
+        $chamado = Chamado::factory()->create(['setor_id' => $setores[1]->id]);
+
+        $this->expectException(ChamadoNaoPertenceAoSetorException::class);
+
+        $this->service->registrarFinalizacao($chamado, $tecnico, 'Motivo', 'Descrição detalhada.');
+    }
+
+    public function test_adicionar_historico_sem_assumir_quando_ja_tem_responsavel(): void
+    {
+        $setor = Setor::query()->firstOrFail();
+        $tecnico1 = Usuario::factory()->tecnico()->create(['setor_id' => $setor->id]);
+        $tecnico2 = Usuario::factory()->tecnico()->create(['setor_id' => $setor->id]);
+        $chamado = Chamado::factory()->create([
+            'setor_id' => $setor->id,
+            'tecnico_responsavel_id' => $tecnico1->id,
+        ]);
+
+        $this->service->adicionar($chamado, $tecnico2, [
+            'status' => StatusChamadoEnum::EM_ANDAMENTO->value,
+            'descricao' => 'Continuidade do atendimento.',
+        ]);
+
+        $this->assertSame($tecnico1->id, $chamado->refresh()->tecnico_responsavel_id);
+    }
 }

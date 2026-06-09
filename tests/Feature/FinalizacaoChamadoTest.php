@@ -143,4 +143,16 @@ class FinalizacaoChamadoTest extends TestCase
 
         $this->assertSame($numero1 + 1, $numero2);
     }
+
+    public function test_nao_finaliza_chamado_ja_finalizado(): void
+    {
+        Queue::fake();
+
+        $chamado = Chamado::factory()->finalizado()->create();
+        $tecnico = $this->tecnicoDoChamado($chamado);
+
+        $this->expectException(ValidationException::class);
+
+        $this->service->finalizar($chamado, $tecnico, $this->dadosFinalizacaoChamado());
+    }
 }

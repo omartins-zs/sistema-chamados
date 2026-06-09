@@ -98,6 +98,42 @@ class ChamadoPublicoTest extends TestCase
         $response->assertSee($chamado->nome_solicitante);
     }
 
+    public function test_formulario_criar_exibe_setores_ativos(): void
+    {
+        $response = $this->get(route('chamados.criar'));
+
+        $response->assertOk();
+        $response->assertSee($this->setor->nome);
+    }
+
+    public function test_sucesso_redireciona_quando_protocolo_inexistente(): void
+    {
+        $response = $this->get(route('chamados.sucesso', 'CHM-2099-000999'));
+
+        $response->assertRedirect(route('chamados.criar'));
+        $response->assertSessionHas('erro');
+    }
+
+    public function test_finalizado_redireciona_quando_protocolo_inexistente(): void
+    {
+        $response = $this->get(route('chamados.finalizado', 'CHM-2099-000999'));
+
+        $response->assertRedirect(route('chamados.criar'));
+        $response->assertSessionHas('erro');
+    }
+
+    public function test_finalizado_redireciona_quando_chamado_nao_finalizado(): void
+    {
+        $chamado = Chamado::factory()->create([
+            'status' => StatusChamadoEnum::EM_ANDAMENTO,
+        ]);
+
+        $response = $this->get(route('chamados.finalizado', $chamado->protocolo));
+
+        $response->assertRedirect(route('chamados.criar'));
+        $response->assertSessionHas('erro');
+    }
+
     /**
      * @return array<string, mixed>
      */
