@@ -2,15 +2,14 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Resources\Setores\SetorResource;
-use App\Filament\Widgets\ConfiguracoesStatsWidget;
+use App\Enums\TipoUsuarioEnum;
+use App\Models\AvaliacaoChamado;
+use App\Models\Chamado;
 use App\Models\Setor;
+use App\Models\Usuario;
 use App\Services\QueueStatusService;
 use BackedEnum;
-use Filament\Actions\Action;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -30,56 +29,25 @@ class Configuracoes extends Page
         return auth()->user()?->ehAdministrador() ?? false;
     }
 
-    public function getHeaderWidgets(): array
-    {
-        return [
-            ConfiguracoesStatsWidget::class,
-        ];
-    }
-
-    public function getHeaderWidgetsColumns(): int
-    {
-        return 4;
-    }
-
     public function content(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Grid::make(2)
-                    ->schema([
-                        Section::make('Informações do Sistema')
-                            ->description('Ambiente, versões e parâmetros ativos')
-                            ->icon(Heroicon::OutlinedCpuChip)
-                            ->schema([
-                                View::make('filament.pages.partials.configuracoes-sistema'),
-                            ]),
-                        Section::make('E-mails e Filas')
-                            ->description('Status do worker e envio de notificações')
-                            ->icon(Heroicon::OutlinedEnvelope)
-                            ->schema([
-                                View::make('filament.pages.partials.configuracoes-email-fila'),
-                            ]),
-                    ]),
-                Section::make('Acesso Rápido')
-                    ->description('Atalhos para áreas públicas e gestão interna')
-                    ->icon(Heroicon::OutlinedLink)
-                    ->schema([
-                        View::make('filament.pages.partials.configuracoes-links'),
-                    ]),
-                Section::make('Setores Cadastrados')
-                    ->description('Áreas de atendimento com técnicos e chamados vinculados')
-                    ->icon(Heroicon::OutlinedBuildingOffice2)
-                    ->headerActions([
-                        Action::make('gerenciarSetores')
-                            ->label('Gerenciar setores')
-                            ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
-                            ->url(SetorResource::getUrl('index')),
-                    ])
-                    ->schema([
-                        View::make('filament.pages.partials.configuracoes-setores'),
-                    ]),
+                View::make('filament.pages.configuracoes'),
             ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getResumo(): array
+    {
+        return [
+            'chamados' => Chamado::query()->count(),
+            'tecnicos' => Usuario::query()->where('tipo_usuario', TipoUsuarioEnum::TECNICO)->count(),
+            'setores' => Setor::query()->count(),
+            'avaliacoes' => AvaliacaoChamado::query()->count(),
+        ];
     }
 
     /**
@@ -94,7 +62,7 @@ class Configuracoes extends Page
         return [
             'nome' => config('app.name'),
             'ambiente_rotulo' => $this->rotuloAmbiente($ambiente),
-            'ambiente_cor' => $this->corAmbienteFilament($ambiente),
+            'ambiente_cor' => $this->corAmbiente($ambiente),
             'laravel' => app()->version(),
             'php' => PHP_VERSION,
             'url' => config('app.url'),
@@ -139,13 +107,13 @@ class Configuracoes extends Page
         };
     }
 
-    private function corAmbienteFilament(string $ambiente): string
+    private function corAmbiente(string $ambiente): string
     {
         return match ($ambiente) {
-            'local' => 'warning',
-            'staging', 'homolog' => 'info',
-            'production' => 'success',
-            default => 'gray',
+            'local' => 'bg-amber-100 text-amber-800 ring-amber-200 dark:bg-amber-950/50 dark:text-amber-200 dark:ring-amber-800',
+            'staging', 'homolog' => 'bg-sky-100 text-sky-800 ring-sky-200 dark:bg-sky-950/50 dark:text-sky-200 dark:ring-sky-800',
+            'production' => 'bg-emerald-100 text-emerald-800 ring-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-200 dark:ring-emerald-800',
+            default => 'bg-slate-100 text-slate-700 ring-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-700',
         };
     }
 
