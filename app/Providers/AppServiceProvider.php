@@ -14,6 +14,7 @@ use App\Policies\SetorPolicy;
 use App\Policies\UsuarioPolicy;
 use App\Services\QueueStatusService;
 use Carbon\Carbon;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Queue\Events\Looping;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
@@ -23,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->bind(Authenticatable::class, Usuario::class);
     }
 
     public function boot(): void

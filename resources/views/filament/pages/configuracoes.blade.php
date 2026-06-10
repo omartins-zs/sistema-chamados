@@ -11,14 +11,15 @@
     $iconesSetor = ['heroicon-o-code-bracket', 'heroicon-o-server-stack', 'heroicon-o-wrench-screwdriver', 'heroicon-o-signal'];
 
     $metricas = [
-        ['label' => 'Chamados', 'valor' => $resumo['chamados'], 'icone' => 'heroicon-o-ticket', 'cor' => 'primary'],
+        ['label' => 'Chamados', 'valor' => $resumo['chamados'], 'icone' => 'heroicon-o-ticket', 'cor' => 'slate'],
         ['label' => 'Técnicos', 'valor' => $resumo['tecnicos'], 'icone' => 'heroicon-o-users', 'cor' => 'sky'],
         ['label' => 'Setores', 'valor' => $resumo['setores'], 'icone' => 'heroicon-o-building-office-2', 'cor' => 'violet'],
         ['label' => 'Avaliações', 'valor' => $resumo['avaliacoes'], 'icone' => 'heroicon-o-star', 'cor' => 'emerald'],
     ];
 
     $coresMetrica = [
-        'primary' => 'bg-primary-100 text-primary-700 dark:bg-primary-950/50 dark:text-primary-300',
+        'slate' => 'flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300',
+        'primary' => 'flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300',
         'sky' => 'bg-sky-100 text-sky-700 dark:bg-sky-950/50 dark:text-sky-300',
         'violet' => 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
         'emerald' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300',
@@ -42,13 +43,13 @@
 
 <div class="fi-configuracoes space-y-6">
         {{-- Hero --}}
-        <section class="overflow-hidden rounded-2xl bg-gradient-to-br from-primary-600 to-primary-800 text-white shadow-lg">
-            <div class="p-6 sm:p-8">
+        <section class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 overflow-hidden">
+            <div>
                 <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
-                        <p class="text-sm font-medium text-primary-200">Painel Administrativo</p>
-                        <h2 class="mt-1 text-2xl font-bold sm:text-3xl">{{ $sistema['nome'] }}</h2>
-                        <p class="mt-2 max-w-2xl text-sm text-primary-100">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Painel Administrativo</p>
+                        <h2 class="mt-1 text-2xl font-semibold text-gray-950 sm:text-3xl dark:text-white">{{ $sistema['nome'] }}</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-2xl">
                             Visão geral do ambiente, filas, setores e atalhos do sistema de chamados.
                         </p>
                     </div>
@@ -57,7 +58,7 @@
                             {{ $sistema['ambiente_rotulo'] }}
                         </span>
                         @if ($sistema['debug'])
-                            <span class="inline-flex items-center rounded-full bg-orange-500/20 px-3 py-1.5 text-sm font-medium text-orange-100 ring-1 ring-inset ring-orange-300/40">
+                            <span class="inline-flex items-center rounded-full bg-orange-100 px-3 py-1.5 text-sm font-medium text-orange-800 ring-1 ring-inset ring-orange-300 dark:bg-orange-500/20 dark:text-orange-100 dark:ring-orange-300/40">
                                 Debug ativo
                             </span>
                         @endif
@@ -69,7 +70,7 @@
         {{-- Métricas --}}
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             @foreach ($metricas as $metrica)
-                <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
                     <div class="flex items-center gap-3">
                         <span @class(['flex h-11 w-11 items-center justify-center rounded-xl', $coresMetrica[$metrica['cor']]])>
                             <x-filament::icon :icon="$metrica['icone']" class="h-5 w-5" />
@@ -85,24 +86,24 @@
 
         {{-- Sistema + E-mails --}}
         <div class="grid gap-6 lg:grid-cols-2">
-            <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <section class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
                 <div class="mb-5 flex items-center gap-3">
-                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
                         <x-filament::icon icon="heroicon-o-cpu-chip" class="h-5 w-5" />
                     </span>
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-950 dark:text-white">Informações do Sistema</h3>
-                        <p class="text-sm text-gray-500">Ambiente, versões e parâmetros ativos</p>
+                        <h3 class="text-lg font-semibold text-gray-950 dark:text-white text-lg">Informações do Sistema</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 text-sm">Ambiente, versões e parâmetros ativos</p>
                     </div>
                 </div>
 
-                <dl class="divide-y divide-gray-100 dark:divide-gray-800">
+                <dl class="divide-y divide-gray-100 dark:divide-white/10">
                     @foreach ($itensSistema as $item)
                         <div class="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
-                            <dt class="text-sm text-gray-500">{{ $item['label'] }}</dt>
+                            <dt class="text-sm text-gray-500 dark:text-gray-400 text-sm">{{ $item['label'] }}</dt>
                             <dd class="text-right text-sm font-semibold text-gray-950 dark:text-white">
                                 @if (! empty($item['link']))
-                                    <a href="{{ $item['link'] }}" target="_blank" class="text-primary-600 hover:underline dark:text-primary-400">
+                                    <a href="{{ $item['link'] }}" target="_blank" class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-400">
                                         {{ $item['valor'] }}
                                     </a>
                                 @else
@@ -114,14 +115,14 @@
                 </dl>
             </section>
 
-            <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <section class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
                 <div class="mb-5 flex items-center gap-3">
                     <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
                         <x-filament::icon icon="heroicon-o-envelope" class="h-5 w-5" />
                     </span>
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-950 dark:text-white">E-mails e Filas</h3>
-                        <p class="text-sm text-gray-500">Worker, processamento e notificações</p>
+                        <h3 class="text-lg font-semibold text-gray-950 dark:text-white text-lg">E-mails e Filas</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 text-sm">Worker, processamento e notificações</p>
                     </div>
                 </div>
 
@@ -196,18 +197,18 @@
         </div>
 
         {{-- Protocolo --}}
-        <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+        <section class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div class="flex items-start gap-3">
-                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary-700 dark:bg-primary-950/40 dark:text-primary-300">
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
                         <x-filament::icon icon="heroicon-o-hashtag" class="h-5 w-5" />
                     </span>
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-950 dark:text-white">Formato do Protocolo</h3>
-                        <p class="mt-1 text-sm text-gray-500">Identificador único gerado ao abrir um chamado</p>
+                        <h3 class="text-lg font-semibold text-gray-950 dark:text-white text-lg">Formato do Protocolo</h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400 text-sm">Identificador único gerado ao abrir um chamado</p>
                     </div>
                 </div>
-                <p class="rounded-xl bg-primary-50 px-5 py-3 font-mono text-lg font-bold tracking-wider text-primary-700 dark:bg-primary-950/40 dark:text-primary-300">
+                <p class="rounded-xl bg-gray-50 px-5 py-3 font-mono text-lg font-bold tracking-wider text-primary-600 dark:bg-white/5 dark:text-primary-400">
                     CHM-2026-000001
                 </p>
             </div>
@@ -217,19 +218,19 @@
         </section>
 
         {{-- Setores --}}
-        <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+        <section class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div class="flex items-center gap-3">
                     <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300">
                         <x-filament::icon icon="heroicon-o-building-office-2" class="h-5 w-5" />
                     </span>
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-950 dark:text-white">Setores Cadastrados</h3>
-                        <p class="text-sm text-gray-500">Áreas de atendimento com técnicos e chamados</p>
+                        <h3 class="text-lg font-semibold text-gray-950 dark:text-white text-lg">Setores Cadastrados</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 text-sm">Áreas de atendimento com técnicos e chamados</p>
                     </div>
                 </div>
                 <a href="{{ SetorResource::getUrl('index') }}"
-                   class="inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 hover:underline dark:text-primary-400">
+                   class="inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:underline dark:text-primary-400">
                     Gerenciar setores
                     <x-filament::icon icon="heroicon-m-chevron-right" class="h-4 w-4" />
                 </a>
@@ -238,12 +239,12 @@
             @if (count($setores) === 0)
                 <div class="rounded-xl border border-dashed border-gray-300 px-6 py-12 text-center dark:border-gray-600">
                     <x-filament::icon icon="heroicon-o-building-office-2" class="mx-auto mb-3 h-10 w-10 text-gray-300" />
-                    <p class="text-sm text-gray-500">Nenhum setor cadastrado.</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 text-sm">Nenhum setor cadastrado.</p>
                 </div>
             @else
                 <div class="grid gap-4 sm:grid-cols-2">
                     @foreach ($setores as $setor)
-                        <div class="rounded-xl border border-gray-200 p-4 transition hover:border-primary-300 hover:shadow-md dark:border-gray-700 dark:hover:border-primary-600">
+                        <div class="rounded-xl border border-gray-200 p-4 transition hover:border-slate-400 hover:shadow-md dark:border-gray-700 dark:hover:border-slate-500">
                             <div class="flex items-start justify-between gap-3">
                                 <div class="flex min-w-0 items-start gap-3">
                                     <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gray-50 dark:bg-white/5">
@@ -277,13 +278,13 @@
         </section>
 
         {{-- Acesso rápido --}}
-        <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+        <section class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             <h3 class="mb-4 text-lg font-semibold text-gray-950 dark:text-white">Acesso Rápido</h3>
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($links as $link)
                     <a href="{{ $link['url'] }}" @if ($link['externo']) target="_blank" @endif
-                       class="group flex items-center gap-3 rounded-xl border border-gray-200 p-4 transition hover:border-primary-300 hover:bg-primary-50/50 dark:border-gray-700 dark:hover:border-primary-600 dark:hover:bg-primary-950/20">
-                        <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100 text-primary-700 dark:bg-primary-950/40 dark:text-primary-300">
+                       class="group flex items-center gap-3 rounded-xl border border-gray-200 p-4 transition hover:border-slate-400 hover:bg-slate-50 dark:border-gray-700 dark:hover:border-slate-500 dark:hover:bg-slate-800/50">
+                        <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
                             <x-filament::icon :icon="$link['icone']" class="h-5 w-5" />
                         </span>
                         <div class="min-w-0 flex-1">

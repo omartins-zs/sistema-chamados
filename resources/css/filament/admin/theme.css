@@ -3,15 +3,16 @@
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
 
+/* Paleta da marca — só cor primária (botões, links, foco). Resto = Filament padrão. */
 @theme {
-    --color-primary-50: #e6f0fa;
-    --color-primary-100: #cce0f5;
-    --color-primary-200: #99c2eb;
-    --color-primary-300: #66a3e0;
-    --color-primary-400: #3385d6;
-    --color-primary-500: #00468a;
-    --color-primary-600: #003870;
-    --color-primary-700: #002a56;
-    --color-primary-800: #001c3b;
-    --color-primary-900: #000e21;
+    --color-primary-50: #f0f4f8;
+    --color-primary-100: #e0e1dd;
+    --color-primary-200: #c5cad3;
+    --color-primary-300: #778da9;
+    --color-primary-400: #5c7490;
+    --color-primary-500: #415a77;
+    --color-primary-600: #364a62;
+    --color-primary-700: #1b263b;
+    --color-primary-800: #0d1b2a;
+    --color-primary-900: #060d14;
 }
