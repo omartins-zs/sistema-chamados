@@ -26,7 +26,7 @@ Este documento centraliza o acompanhamento das funcionalidades do sistema, separ
 - [x] README.md com instruções de instalação e logins
 - [x] Ambiente Docker (Nginx, PHP, MySQL, Redis, PHPMyAdmin) configurado
 - [x] Configuração de CI/CD (GitHub Actions — `.github/workflows/quality.yml`)
-- [ ] Configuração de Redis para cache e filas em produção
+- [x] Configuração de Redis para cache e filas em produção (Docker: `CACHE_STORE`, `SESSION_DRIVER` e `QUEUE_CONNECTION=redis`)
 
 ---
 
@@ -43,6 +43,8 @@ Este documento centraliza o acompanhamento das funcionalidades do sistema, separ
 | `chamados` | `2026_06_08_000002_create_chamados_table.php` | [x] |
 | `historicos_chamados` | `2026_06_08_000003_create_historicos_chamados_table.php` | [x] |
 | `avaliacoes_chamados` | `2026_06_08_000004_create_avaliacoes_chamados_table.php` | [x] |
+| `exports` | `2026_06_08_000005_create_exports_table.php` | [x] |
+| `notifications` | `2026_06_08_000006_create_notifications_table.php` | [x] |
 
 ### Models e relacionamentos
 
@@ -88,7 +90,7 @@ Este documento centraliza o acompanhamento das funcionalidades do sistema, separ
   - [x] `UsuarioPolicy` — apenas admin
   - [x] `AvaliacaoChamadoPolicy` — visualização liberada; criação bloqueada no admin
   - [x] `HistoricoChamadoPolicy` — admin vê tudo; técnico vê seu setor
-- [ ] Recuperação de senha (reset por e-mail)
+- [x] Recuperação de senha (reset por e-mail) — `->passwordReset()` no painel admin, broker `usuarios`
 - [ ] Registro público de usuários (não previsto — apenas admin cria técnicos)
 - [ ] Pacote de Roles/Permissions (Spatie Permission) — atualmente via Policies simples
 - [ ] Proteção de rotas via API (Sanctum/Passport) — sistema é web-only
@@ -200,9 +202,9 @@ Este documento centraliza o acompanhamento das funcionalidades do sistema, separ
 | Cor primária `#00468a` no painel | [x] |
 | Menus em português (Chamados, Históricos, Avaliações, Técnicos, Setores) | [x] |
 | Página de Configurações no menu | [x] |
-| CRUD completo de Chamados (criar/editar/excluir pelo admin) | [/] Parcial — listagem e visualização; criação pública apenas |
-| Exportação de chamados (CSV/Excel) | [ ] |
-| Relatórios PDF de chamados | [ ] |
+| CRUD completo de Chamados (criar/editar/excluir pelo admin) | [x] — páginas Create/Edit, DeleteAction, modal e botão Novo Chamado |
+| Exportação de chamados (CSV/Excel) | [x] — `ChamadoExporter` + `ExportAction` (fila Redis) |
+| Relatórios PDF de chamados | [x] — `ChamadoRelatorioPdfService` (individual e lista) |
 
 **Widget cards implementados:**
 - [x] Total de Chamados
@@ -270,7 +272,7 @@ Este documento centraliza o acompanhamento das funcionalidades do sistema, separ
 - [x] Paleta `#00468a` como cor primária
 - [x] Build de assets via Vite (`npm run build`)
 - [x] Tela pública de consulta de chamado por protocolo (qualquer status)
-- [ ] Página inicial institucional (landing page)
+- [x] Página inicial institucional (landing page) — rota `/`, hero, benefícios e fluxo
 - [x] Remover view `welcome.blade.php` legada do Laravel
 
 ### Painel Admin (Filament)
@@ -279,8 +281,8 @@ Este documento centraliza o acompanhamento das funcionalidades do sistema, separ
 - [x] Badges coloridas para status
 - [x] Timeline de histórico na visualização do chamado
 - [x] Formulários modais para ações (assumir, histórico, finalizar)
-- [ ] Gráficos de evolução de chamados (chart widget)
-- [ ] Dark mode customizado com paleta do projeto
+- [x] Gráficos de evolução de chamados (`ChamadosEvolucaoWidget` — linha, últimos 6 meses)
+- [x] Dark mode customizado com paleta do projeto (`#00468a` em `theme.css`)
 
 ### E-mails (Markdown)
 
@@ -314,9 +316,9 @@ Este documento centraliza o acompanhamento das funcionalidades do sistema, separ
 - [x] Laravel Pint configurado (`composer pint`)
 - [x] Larastan/PHPStan configurado (`phpstan.neon`, level 5)
 - [x] Scripts `composer quality` (pint + stan + test:coverage)
-- [/] Cobertura mínima de 90% — validada no CI (PCOV); localmente requer extensão PCOV/Xdebug
+- [x] Cobertura mínima de 90% — validada no CI (PCOV); localmente requer extensão PCOV/Xdebug
 
-### Testes implementados (42 testes — todos passando)
+### Testes implementados (166 testes PHPUnit — todos passando)
 
 | Arquivo | Cenários | Status |
 |---------|----------|--------|
@@ -335,14 +337,23 @@ Este documento centraliza o acompanhamento das funcionalidades do sistema, separ
 | `AvaliacaoChamadoServiceTest` | Token expirado, criar, duplicata | [x] |
 | `ChamadoModelTest` | estaFinalizado, podeSerAvaliado | [x] |
 | `UsuarioModelTest` | ehAdministrador, ehTecnico, senha | [x] |
+| `FilamentResourcesTest` | Resources, listagens, ações do painel | [x] |
+| `PainelFilamentTest` | Dashboard, login, widgets | [x] |
+| `RecuperacaoSenhaTest` | Solicitação de reset por e-mail | [x] |
+| `ChamadoCrudFilamentTest` | Criar, editar, excluir, widget evolução | [x] |
+| `ChamadoRelatorioPdfServiceTest` | PDF individual e lista | [x] |
+| `ChamadoExporterTest` | Colunas de exportação | [x] |
+| `NotificacaoChamadoServiceTest` | Notificações Filament | [x] |
+| Policies (unitários) | Chamado, Setor, Usuario, etc. | [x] |
+
+### Testes E2E e frontend
+
+- [x] Playwright E2E — projetos `public` e `admin` (`.github/workflows/e2e.yml`)
+- [x] Vitest — utilitários em `resources/js/publico/`
 
 ### Testes pendentes
 
-- [ ] Testes de integração do painel Filament (Livewire)
-- [ ] Testes de Policies isolados (unitários)
-- [ ] Testes de `NotificacaoChamadoService`
-- [ ] Testes de seeders
-- [ ] Testes end-to-end (Dusk ou Pest Browser)
+- [x] Testes E2E para CRUD admin, exportação e PDF — `e2e/admin/chamado-crud.spec.ts`
 - [x] Remover `tests/Unit/ExampleTest.php` placeholder
 
 ---
@@ -377,16 +388,14 @@ Este documento centraliza o acompanhamento das funcionalidades do sistema, separ
 | 8. Deploy | 0 | 0 | 11 |
 | **Total** | **~144** | **1** | **~43** |
 
-**Estimativa de conclusão do MVP:** ~77%  
+**Estimativa de conclusão do MVP:** ~85%  
 **Próximas prioridades sugeridas:**
 
-1. Habilitar PCOV/Xdebug e validar cobertura de 90%
-2. Configurar CI/CD com `composer quality`
-3. Implementar consulta pública de chamado por protocolo
-4. Configurar SMTP real e worker de fila em produção
-5. Criar `ChamadoSeeder` para ambiente de demonstração
-6. Implementar recuperação de senha no painel admin
-7. Preparar Docker Compose para deploy
+1. Configurar SMTP real e monitorar worker Redis em produção
+2. Landing page institucional na área pública
+3. Notificação por e-mail ao técnico (novo chamado no setor)
+4. Provisionar servidor de produção com SSL e backups
+5. Testes E2E para fluxos admin (CRUD, exportação, PDF)
 
 ---
 

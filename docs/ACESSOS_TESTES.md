@@ -6,12 +6,26 @@ Credenciais, URLs e fluxos para validar o sistema após instalação.
 
 ## URLs por ambiente
 
-| Recurso | Local (`artisan serve`) | Docker |
-| --- | --- | --- |
-| Home / Abrir chamado | http://127.0.0.1:8000/chamados/novo | http://localhost:8080/chamados/novo |
-| Consultar chamado | http://127.0.0.1:8000/chamados/consultar | http://localhost:8080/chamados/consultar |
-| Painel admin | http://127.0.0.1:8000/admin | http://localhost:8080/admin |
-| PHPMyAdmin | — | http://localhost:8085 |
+### Ambiente local (Laragon / `php artisan serve`)
+
+| Recurso | URL |
+| --- | --- |
+| Página inicial (landing) | http://127.0.0.1:8000/ |
+| Abrir chamado | http://127.0.0.1:8000/chamados/novo |
+| Consultar chamado | http://127.0.0.1:8000/chamados/consultar |
+| Painel admin | http://127.0.0.1:8000/admin |
+
+> Com Laragon, a porta pode variar conforme o virtual host configurado. Ajuste o host/porta se necessário.
+
+### Ambiente Docker (`docker compose up`)
+
+| Recurso | URL |
+| --- | --- |
+| Página inicial (landing) | http://localhost:8080/ |
+| Abrir chamado | http://localhost:8080/chamados/novo |
+| Consultar chamado | http://localhost:8080/chamados/consultar |
+| Painel admin | http://localhost:8080/admin |
+| PHPMyAdmin | http://localhost:8085 |
 
 ---
 
