@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Enums\StatusChamadoEnum;
+use App\Models\AvaliacaoChamado;
 use App\Models\Chamado;
+use App\Models\HistoricoChamado;
 use Database\Seeders\ChamadoSeeder;
 use Database\Seeders\SetorSeeder;
 use Database\Seeders\UsuarioSeeder;
@@ -20,12 +22,19 @@ class ChamadoSeederTest extends TestCase
         $this->seed(UsuarioSeeder::class);
         $this->seed(ChamadoSeeder::class);
 
-        $this->assertSame(3, Chamado::query()->count());
+        $this->assertGreaterThanOrEqual(60, Chamado::query()->count());
+        $this->assertGreaterThan(0, HistoricoChamado::query()->count());
+        $this->assertGreaterThan(0, AvaliacaoChamado::query()->count());
+
+        foreach (StatusChamadoEnum::cases() as $status) {
+            $this->assertTrue(
+                Chamado::query()->where('status', $status)->exists(),
+                "Nenhum chamado com status {$status->value} foi criado pelo seeder."
+            );
+        }
+
         $this->assertTrue(
-            Chamado::query()->where('status', StatusChamadoEnum::EM_ABERTO)->exists()
-        );
-        $this->assertTrue(
-            Chamado::query()->where('status', StatusChamadoEnum::EM_ANDAMENTO)->exists()
+            Chamado::query()->where('protocolo', 'CHM-'.now()->year.'-000002')->exists()
         );
     }
 }

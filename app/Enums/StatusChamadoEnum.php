@@ -50,16 +50,16 @@ enum StatusChamadoEnum: string
     public function classesBadge(): string
     {
         return match ($this) {
-            self::EM_ABERTO => 'bg-slate-100 text-slate-700 ring-slate-200',
-            self::ACESSADO => 'bg-sky-100 text-sky-800 ring-sky-200',
-            self::EM_ANDAMENTO => 'bg-amber-100 text-amber-800 ring-amber-200',
-            self::AGUARDANDO_CLIENTE => 'bg-blue-100 text-blue-800 ring-blue-200',
-            self::AGUARDANDO_TERCEIROS => 'bg-violet-100 text-violet-800 ring-violet-200',
-            self::PAUSADO => 'bg-orange-100 text-orange-800 ring-orange-200',
-            self::BLOQUEADO => 'bg-red-100 text-red-800 ring-red-200',
-            self::CONCLUIDO => 'bg-emerald-100 text-emerald-800 ring-emerald-200',
-            self::FINALIZADO => 'bg-green-100 text-green-800 ring-green-200',
-            self::CANCELADO => 'bg-red-100 text-red-800 ring-red-200',
+            self::EM_ABERTO => 'bg-gray-100 text-gray-800 ring-gray-300 dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-600',
+            self::ACESSADO => 'bg-sky-100 text-sky-900 ring-sky-300 dark:bg-sky-950/60 dark:text-sky-200 dark:ring-sky-700',
+            self::EM_ANDAMENTO => 'bg-amber-100 text-amber-900 ring-amber-300 dark:bg-amber-950/60 dark:text-amber-200 dark:ring-amber-700',
+            self::AGUARDANDO_CLIENTE => 'bg-blue-100 text-blue-900 ring-blue-300 dark:bg-blue-950/60 dark:text-blue-200 dark:ring-blue-700',
+            self::AGUARDANDO_TERCEIROS => 'bg-violet-100 text-violet-900 ring-violet-300 dark:bg-violet-950/60 dark:text-violet-200 dark:ring-violet-700',
+            self::PAUSADO => 'bg-orange-100 text-orange-900 ring-orange-300 dark:bg-orange-950/60 dark:text-orange-200 dark:ring-orange-700',
+            self::BLOQUEADO => 'bg-red-100 text-red-900 ring-red-300 dark:bg-red-950/60 dark:text-red-200 dark:ring-red-700',
+            self::CONCLUIDO => 'bg-emerald-100 text-emerald-900 ring-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-200 dark:ring-emerald-700',
+            self::FINALIZADO => 'bg-green-100 text-green-900 ring-green-300 dark:bg-green-950/60 dark:text-green-200 dark:ring-green-700',
+            self::CANCELADO => 'bg-red-100 text-red-900 ring-red-300 dark:bg-red-950/60 dark:text-red-200 dark:ring-red-700',
         };
     }
 
