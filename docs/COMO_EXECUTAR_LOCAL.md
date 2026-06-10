@@ -61,10 +61,33 @@ DB_USERNAME=root
 DB_PASSWORD=
 
 QUEUE_CONNECTION=database
+
+# E-mail — padrão grava em storage/logs/laravel.log
 MAIL_MAILER=log
 ```
 
 > No Laragon, o MySQL geralmente roda na porta **3306** com usuário `root` e senha vazia.
+
+### E-mail (SMTP)
+
+O sistema envia e-mail ao **abrir chamado**, ao **finalizar** (link de avaliação) e na **recuperação de senha** do admin. Os envios passam pela fila — mantenha `php artisan queue:work` ou `queue:listen` ativo.
+
+| Modo | Quando usar | Configuração |
+| --- | --- | --- |
+| **Log** (padrão) | Laragon sem SMTP | `MAIL_MAILER=log` — leia `storage/logs/laravel.log` |
+| **Mailpit** | Testar envio real local | Instale [Mailpit](https://github.com/axllent/mailpit), UI em `:8025` |
+| **SMTP empresa** | Homologação/produção | Veja `docs/IMPLANTACAO_EMPRESA.md` |
+
+Exemplo com Mailpit local (`.env`):
+
+```env
+MAIL_MAILER=smtp
+MAIL_SCHEME=null
+MAIL_HOST=127.0.0.1
+MAIL_PORT=1025
+MAIL_FROM_ADDRESS="noreply@sistema-chamados.local"
+MAILPIT_UI_URL=http://127.0.0.1:8025
+```
 
 ---
 
@@ -199,7 +222,7 @@ php artisan about
 | --- | --- |
 | Erro de conexão MySQL | Verifique se o MySQL do Laragon está iniciado e se o banco `sistema_chamados` existe |
 | Página sem estilo | Execute `npm run build` |
-| E-mail não enviado | Rode `php artisan queue:work` (com `MAIL_MAILER=log`, veja em `storage/logs/laravel.log`) |
+| E-mail não enviado | Rode `php artisan queue:work`. Com `MAIL_MAILER=log`, veja `storage/logs/laravel.log`. Com SMTP/Mailpit, confira host/porta no `.env` |
 | Erro 500 após clone | Execute `composer install`, `php artisan key:generate` e `php artisan migrate` |
 | Porta 8000 ocupada | Use `php artisan serve --port=8001` |
 

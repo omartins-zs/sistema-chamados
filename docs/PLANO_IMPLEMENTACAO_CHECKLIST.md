@@ -300,8 +300,11 @@ Este documento centraliza o acompanhamento das funcionalidades do sistema, separ
 - [x] Mailables implementam `ShouldQueue`
 - [x] Comando `php artisan queue:work` documentado
 - [x] Script `composer dev` inclui `queue:listen`
+- [x] Configuração SMTP documentada — variáveis `MAIL_*` em `.env.example` e `.env.docker.example`
+- [x] Mailpit no `docker-compose.yml` para captura de e-mails em desenvolvimento (UI em `:8025`)
+- [x] Painel **Configurações** exibe driver SMTP, host/porta, remetente e link do Mailpit
 - [ ] Worker de fila configurado como serviço (Supervisor/systemd)
-- [ ] Configuração de SMTP real para produção (atualmente `MAIL_MAILER=log`)
+- [ ] SMTP de produção provisionado na empresa (credenciais reais no `.env` de produção)
 - [ ] Integração com serviço de SMS/WhatsApp para notificações
 - [ ] Integração com Gateway de Pagamento (não aplicável)
 
@@ -364,7 +367,8 @@ Este documento centraliza o acompanhamento das funcionalidades do sistema, separ
 - [ ] Configuração de Nginx/Apache como reverse proxy
 - [ ] Configuração de SSL/HTTPS
 - [ ] `APP_ENV=production` e `APP_DEBUG=false`
-- [ ] Configuração de SMTP real (Mailgun, SES, etc.)
+- [x] Configuração SMTP documentada (`MAIL_*`, Mailpit no Docker, guia em `IMPLANTACAO_EMPRESA.md`)
+- [ ] SMTP de produção provisionado (Mailgun, SES, servidor corporativo, etc.)
 - [ ] Worker de fila como serviço persistente (Supervisor)
 - [ ] Scheduler do Laravel configurado (`cron`)
 - [ ] Rotinas de backup do banco de dados agendadas
@@ -383,19 +387,18 @@ Este documento centraliza o acompanhamento das funcionalidades do sistema, separ
 | 3. Autenticação | 6 | 0 | 5 |
 | 4. Módulos Principais | 68 | 1 | 8 |
 | 5. Frontend | 14 | 0 | 4 |
-| 6. Jobs/Filas | 7 | 0 | 4 |
+| 6. Jobs/Filas | 10 | 0 | 3 |
 | 7. Testes | 17 | 0 | 6 |
-| 8. Deploy | 0 | 0 | 11 |
-| **Total** | **~144** | **1** | **~43** |
+| 8. Deploy | 1 | 0 | 10 |
+| **Total** | **~148** | **1** | **~39** |
 
-**Estimativa de conclusão do MVP:** ~85%  
+**Estimativa de conclusão do MVP:** ~87%  
 **Próximas prioridades sugeridas:**
 
-1. Configurar SMTP real e monitorar worker Redis em produção
-2. Landing page institucional na área pública
-3. Notificação por e-mail ao técnico (novo chamado no setor)
-4. Provisionar servidor de produção com SSL e backups
-5. Testes E2E para fluxos admin (CRUD, exportação, PDF)
+1. Provisionar SMTP de produção na empresa e monitorar worker Redis
+2. Notificação por e-mail ao técnico (novo chamado no setor)
+3. Provisionar servidor de produção com SSL e backups
+4. Worker de fila como serviço persistente (Supervisor/systemd)
 
 ---
 

@@ -86,10 +86,16 @@ REDIS_CLIENT=phpredis
 REDIS_HOST=redis
 REDIS_PORT=6379
 
-MAIL_MAILER=log
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_FROM_ADDRESS="noreply@sistema-chamados.local"
+MAILPIT_UI_URL=http://localhost:8025
 ```
 
 > **Importante:** Dentro dos containers, `DB_HOST=mysql` e `DB_PORT=3306` (porta interna). A porta **3308** é apenas para acessar o MySQL **do seu computador** (HeidiSQL, DBeaver, etc.).
+
+> **E-mails:** o `.env.docker.example` já aponta para o container **Mailpit**. Após criar/finalizar um chamado, abra http://localhost:8025 para ver confirmação e link de avaliação. O worker (`chamados-worker`) precisa estar rodando.
 
 ---
 

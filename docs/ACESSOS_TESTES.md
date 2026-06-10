@@ -26,6 +26,7 @@ Credenciais, URLs e fluxos para validar o sistema após instalação.
 | Consultar chamado | http://localhost:8080/chamados/consultar |
 | Painel admin | http://localhost:8080/admin |
 | PHPMyAdmin | http://localhost:8085 |
+| Mailpit (e-mails enviados) | http://localhost:8025 |
 
 ---
 
@@ -129,7 +130,7 @@ Use esses protocolos para testar a **Consultar Chamado**.
 ### 5. Finalização e avaliação
 
 1. Como técnico, finalize um chamado
-2. Verifique e-mail de avaliação enfileirado
+2. Verifique e-mail de avaliação (Docker: http://localhost:8025 no Mailpit; Laragon: `storage/logs/laravel.log` ou Mailpit local)
 3. Acesse o link `/chamados/{protocolo}/avaliar/{token}`
 4. Envie notas de 1 a 5
 5. Confirme mensagem de agradecimento
