@@ -9,6 +9,8 @@ use App\Models\Chamado;
 use App\Services\ChamadoService;
 use App\Services\HistoricoChamadoService;
 use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
@@ -36,6 +38,17 @@ class ViewChamado extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            EditAction::make()
+                ->label('Editar')
+                ->visible(fn (): bool => auth()->user()->can('update', $this->getRecord())),
+            Action::make('relatorioPdf')
+                ->label('PDF')
+                ->icon(Heroicon::OutlinedDocumentArrowDown)
+                ->color('gray')
+                ->url(fn (): string => route('filament.admin.chamados.relatorio-pdf-individual', $this->getRecord())),
+            DeleteAction::make()
+                ->label('Excluir')
+                ->visible(fn (): bool => auth()->user()->can('delete', $this->getRecord())),
             Action::make('assumir')
                 ->label('Assumir Chamado')
                 ->icon(Heroicon::OutlinedHandRaised)
@@ -86,9 +99,12 @@ class ViewChamado extends ViewRecord
 
     public function getTitle(): string|Htmlable
     {
-        $chamado = $this->getRecord();
+        return $this->getRecord()->titulo;
+    }
 
-        return "{$chamado->protocolo} — {$chamado->titulo}";
+    public function getSubheading(): string|Htmlable|null
+    {
+        return $this->getRecord()->protocolo;
     }
 
     public function infolist(Schema $schema): Schema
