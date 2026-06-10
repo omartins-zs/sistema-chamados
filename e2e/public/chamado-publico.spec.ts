@@ -2,8 +2,18 @@ import { expect, test } from '@playwright/test';
 import { dadosChamadoPublico, protocoloDemo } from '../helpers/dados';
 
 test.describe('Área pública', () => {
-    test('redireciona a home para abrir chamado', async ({ page }) => {
+    test('exibe landing page institucional na home', async ({ page }) => {
         await page.goto('/');
+
+        await expect(page).toHaveURL(/\/$/);
+        await expect(page.getByRole('heading', { name: /sistema de chamados técnicos/i })).toBeVisible();
+        await expect(page.getByTestId('btn-hero-abrir-chamado')).toBeVisible();
+        await expect(page.getByTestId('btn-hero-consultar-chamado')).toBeVisible();
+    });
+
+    test('navega da home para abrir chamado', async ({ page }) => {
+        await page.goto('/');
+        await page.getByTestId('btn-hero-abrir-chamado').click();
 
         await expect(page).toHaveURL(/\/chamados\/novo$/);
         await expect(page.getByRole('heading', { name: /abrir chamado/i })).toBeVisible();
