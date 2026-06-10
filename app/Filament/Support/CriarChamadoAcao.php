@@ -8,7 +8,6 @@ use App\Models\Chamado;
 use App\Services\ChamadoService;
 use App\Services\NotificacaoChamadoService;
 use Filament\Actions\Action;
-use Filament\Actions\Contracts\HasActions;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Validator;
@@ -28,7 +27,7 @@ class CriarChamadoAcao
             ->modalSubmitActionLabel('Abrir chamado')
             ->schema(CriarChamadoFormulario::campos())
             ->visible(fn (): bool => auth()->user()?->can('create', Chamado::class) ?? false)
-            ->action(function (array $data, Action $action, HasActions $livewire): void {
+            ->action(function (array $data, Action $action): void {
                 $validador = Validator::make(
                     $data,
                     (new CriarChamadoRequest)->rules(),
@@ -49,7 +48,7 @@ class CriarChamadoAcao
                     ->success()
                     ->send();
 
-                $livewire->redirect(
+                $action->redirect(
                     ChamadoResource::getUrl('view', ['record' => $chamado]),
                     navigate: true,
                 );

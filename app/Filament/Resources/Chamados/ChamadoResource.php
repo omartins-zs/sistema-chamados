@@ -4,8 +4,12 @@ namespace App\Filament\Resources\Chamados;
 
 use App\Enums\ComplexidadeChamadoEnum;
 use App\Enums\StatusChamadoEnum;
+use App\Filament\Exports\ChamadoExporter;
+use App\Filament\Resources\Chamados\Pages\CreateChamado;
+use App\Filament\Resources\Chamados\Pages\EditChamado;
 use App\Filament\Resources\Chamados\Pages\ListChamados;
 use App\Filament\Resources\Chamados\Pages\ViewChamado;
+use App\Filament\Support\ChamadoFormulario;
 use App\Filament\Support\FinalizarChamadoFormulario;
 use App\Models\Chamado;
 use App\Models\Usuario;
@@ -13,6 +17,9 @@ use App\Services\ChamadoService;
 use App\Services\HistoricoChamadoService;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -44,18 +51,7 @@ class ChamadoResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                Select::make('status')
-                    ->label('Status')
-                    ->options(StatusChamadoEnum::opcoes())
-                    ->required(),
-                Select::make('tecnico_responsavel_id')
-                    ->label('Técnico Responsável')
-                    ->relationship('tecnicoResponsavel', 'nome')
-                    ->searchable()
-                    ->preload(),
-            ]);
+        return $schema->components(ChamadoFormulario::camposEdicao());
     }
 
     public static function infolist(Schema $schema): Schema
@@ -149,8 +145,25 @@ class ChamadoResource extends Resource
                     ->label('Técnico')
                     ->options(fn () => Usuario::query()->orderBy('nome')->pluck('nome', 'id')->all()),
             ])
+            ->headerActions([
+                ExportAction::make()
+                    ->label('Exportar')
+                    ->exporter(ChamadoExporter::class)
+                    ->visible(fn (): bool => auth()->user()?->ehAdministrador() ?? false),
+                Action::make('relatorioPdf')
+                    ->label('Relatório PDF')
+                    ->icon(Heroicon::OutlinedDocumentArrowDown)
+                    ->color('gray')
+                    ->url(fn (): string => route('filament.admin.chamados.relatorio-pdf')),
+            ])
             ->recordActions([
                 ViewAction::make()->label('Visualizar'),
+                EditAction::make()
+                    ->label('Editar')
+                    ->visible(fn (Chamado $record): bool => auth()->user()->can('update', $record)),
+                DeleteAction::make()
+                    ->label('Excluir')
+                    ->visible(fn (Chamado $record): bool => auth()->user()->can('delete', $record)),
                 Action::make('assumir')
                     ->label('Assumir')
                     ->icon(Heroicon::OutlinedHandRaised)
@@ -211,7 +224,9 @@ class ChamadoResource extends Resource
     {
         return [
             'index' => ListChamados::route('/'),
+            'create' => CreateChamado::route('/create'),
             'view' => ViewChamado::route('/{record}'),
+            'edit' => EditChamado::route('/{record}/edit'),
         ];
     }
 }
