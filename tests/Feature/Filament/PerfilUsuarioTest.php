@@ -4,7 +4,6 @@ namespace Tests\Feature\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
 use Filament\Facades\Filament;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
 use Tests\Concerns\AutenticaFilament;
@@ -13,7 +12,6 @@ use Tests\TestCase;
 class PerfilUsuarioTest extends TestCase
 {
     use AutenticaFilament;
-    use RefreshDatabase;
 
     public function test_pagina_de_perfil_carrega_para_usuario_autenticado(): void
     {
