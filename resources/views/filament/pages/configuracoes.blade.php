@@ -179,7 +179,31 @@
                             <x-filament::badge :color="$sistema['mailer_cor']">{{ $sistema['mailer_rotulo'] }}</x-filament::badge>
                         </dd>
                     </div>
+                    @if ($sistema['mail_host'])
+                        <div class="rounded-xl bg-gray-50 p-3 dark:bg-white/5 sm:col-span-2">
+                            <dt class="text-xs text-gray-500">Servidor SMTP</dt>
+                            <dd class="mt-1 text-sm font-semibold text-gray-950 dark:text-white">
+                                {{ $sistema['mail_host'] }}:{{ $sistema['mail_port'] }}
+                                @if ($sistema['mail_scheme'])
+                                    <span class="text-xs font-normal text-gray-500">({{ strtoupper($sistema['mail_scheme']) }})</span>
+                                @endif
+                            </dd>
+                        </div>
+                    @endif
+                    <div class="rounded-xl bg-gray-50 p-3 dark:bg-white/5 sm:col-span-2">
+                        <dt class="text-xs text-gray-500">Remetente padrão</dt>
+                        <dd class="mt-1 text-sm font-semibold text-gray-950 dark:text-white">{{ $sistema['mail_from'] }}</dd>
+                    </div>
                 </dl>
+
+                @if ($sistema['mailpit_url'])
+                    <div class="mt-4 rounded-lg border border-primary-200 bg-primary-50 p-3 text-sm text-primary-900 dark:border-primary-800 dark:bg-primary-950/30 dark:text-primary-100">
+                        <p>
+                            <strong>Mailpit:</strong> visualize os e-mails enviados em
+                            <a href="{{ $sistema['mailpit_url'] }}" target="_blank" class="font-medium underline">{{ $sistema['mailpit_url'] }}</a>
+                        </p>
+                    </div>
+                @endif
 
                 @if (! $fila['rodando'] && $fila['precisa_worker'])
                     <div class="mt-4 rounded-lg bg-gray-950 px-4 py-3 font-mono text-xs text-gray-100">

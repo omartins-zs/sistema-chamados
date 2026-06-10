@@ -129,6 +129,10 @@ class PainelFilamentTest extends TestCase
         Config::set('app.env', 'production');
         Config::set('queue.default', 'redis');
         Config::set('mail.default', 'smtp');
+        Config::set('mail.mailers.smtp.host', 'smtp.empresa.com.br');
+        Config::set('mail.mailers.smtp.port', 587);
+        Config::set('mail.mailers.smtp.scheme', 'tls');
+        Config::set('mail.from.address', 'noreply@empresa.com.br');
 
         $page = Livewire::test(Configuracoes::class)->instance();
         $info = $page->getInformacoesSistema();
@@ -137,6 +141,10 @@ class PainelFilamentTest extends TestCase
         $this->assertSame('Redis', $info['fila_rotulo']);
         $this->assertSame('SMTP', $info['mailer_rotulo']);
         $this->assertFalse($info['mailer_alerta']);
+        $this->assertSame('smtp.empresa.com.br', $info['mail_host']);
+        $this->assertSame(587, $info['mail_port']);
+        $this->assertSame('tls', $info['mail_scheme']);
+        $this->assertSame('noreply@empresa.com.br', $info['mail_from']);
     }
 
     public function test_configuracoes_rotulos_de_homologacao_e_log(): void

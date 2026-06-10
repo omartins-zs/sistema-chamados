@@ -58,6 +58,7 @@ class Configuracoes extends Page
         $ambiente = config('app.env');
         $mailer = config('mail.default');
         $fila = config('queue.default');
+        $smtp = config('mail.mailers.smtp');
 
         return [
             'nome' => config('app.name'),
@@ -72,6 +73,11 @@ class Configuracoes extends Page
             'mailer_rotulo' => $this->rotuloMailer($mailer),
             'mailer_cor' => $mailer === 'log' ? 'warning' : 'success',
             'mailer_alerta' => $mailer === 'log',
+            'mail_host' => $mailer === 'smtp' ? ($smtp['host'] ?? null) : null,
+            'mail_port' => $mailer === 'smtp' ? ($smtp['port'] ?? null) : null,
+            'mail_scheme' => $mailer === 'smtp' ? ($smtp['scheme'] ?? null) : null,
+            'mail_from' => config('mail.from.address'),
+            'mailpit_url' => filled(config('mail.mailpit_ui_url')) ? config('mail.mailpit_ui_url') : null,
             'debug' => (bool) config('app.debug'),
         ];
     }
