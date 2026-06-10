@@ -26,7 +26,7 @@ export default defineConfig({
               command: 'bash scripts/e2e-server.sh',
               url: baseURL,
               reuseExistingServer: false,
-              timeout: 120_000,
+              timeout: 180_000,
           }
         : undefined,
     projects: [

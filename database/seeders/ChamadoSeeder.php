@@ -31,6 +31,12 @@ class ChamadoSeeder extends Seeder
 
         $this->criarChamadosFixosDemonstracao($ano, $setores, $tecnicosPorSetor);
 
+        if (filter_var(env('E2E_SEED_MINIMAL', false), FILTER_VALIDATE_BOOL)) {
+            $this->destacarChamadosDemonstracaoNaListagem($ano);
+
+            return;
+        }
+
         $distribuicaoStatus = [
             [StatusChamadoEnum::EM_ABERTO, 7],
             [StatusChamadoEnum::ACESSADO, 6],

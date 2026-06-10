@@ -5,6 +5,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
 export APP_ENV=testing
+export E2E_SEED_MINIMAL=true
 
 if [[ ! -f .env.testing ]]; then
   echo "Arquivo .env.testing não encontrado."
