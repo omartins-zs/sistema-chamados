@@ -26,7 +26,7 @@ services:
       APP_DEBUG: "false"
       CACHE_STORE: redis
       SESSION_DRIVER: redis
-      QUEUE_CONNECTION: database
+      QUEUE_CONNECTION: redis
       REDIS_HOST: redis
       REDIS_PORT: 6379
       DOCKER_WARM_CACHE: "true"
@@ -121,8 +121,9 @@ services:
     environment:
       CACHE_STORE: redis
       SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
       REDIS_HOST: redis
-    command: php artisan queue:work --tries=3 --timeout=90 --sleep=3
+    command: php artisan queue:work redis --tries=3 --timeout=90 --sleep=3
     volumes:
       - .:/var/www/html:delegated
       - vendor_data:/var/www/html/vendor
@@ -147,6 +148,7 @@ services:
     environment:
       CACHE_STORE: redis
       SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
       REDIS_HOST: redis
     command: php artisan schedule:work
     volumes:
