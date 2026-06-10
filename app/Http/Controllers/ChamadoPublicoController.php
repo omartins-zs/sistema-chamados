@@ -15,6 +15,11 @@ class ChamadoPublicoController extends Controller
         private readonly ChamadoService $chamadoService,
     ) {}
 
+    public function inicio(): View
+    {
+        return view('publico.home');
+    }
+
     public function criar(): View
     {
         $setores = Setor::query()->where('ativo', true)->orderBy('nome')->get();

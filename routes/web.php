@@ -5,7 +5,7 @@ use App\Http\Controllers\ChamadoPublicoController;
 use App\Http\Controllers\PainelController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/chamados/novo');
+Route::get('/', [ChamadoPublicoController::class, 'inicio'])->name('home');
 
 Route::get('/painel', [PainelController::class, 'redirecionar'])->name('painel');
 

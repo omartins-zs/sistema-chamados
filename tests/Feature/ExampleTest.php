@@ -6,10 +6,13 @@ use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
-    public function test_pagina_inicial_redireciona_para_abrir_chamado(): void
+    public function test_pagina_inicial_exibe_landing_institucional(): void
     {
         $response = $this->get('/');
 
-        $response->assertRedirect('/chamados/novo');
+        $response->assertOk();
+        $response->assertSee('Sistema de Chamados Técnicos', false);
+        $response->assertSee('Abrir Chamado', false);
+        $response->assertSee('Consultar Chamado', false);
     }
 }
