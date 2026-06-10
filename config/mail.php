@@ -39,7 +39,11 @@ return [
 
         'smtp' => [
             'transport' => 'smtp',
-            'scheme' => env('MAIL_SCHEME'),
+            'scheme' => env('MAIL_SCHEME', match (env('MAIL_ENCRYPTION')) {
+                'ssl', 'smtps' => 'smtps',
+                'tls' => 'tls',
+                default => null,
+            }),
             'url' => env('MAIL_URL'),
             'host' => env('MAIL_HOST', '127.0.0.1'),
             'port' => env('MAIL_PORT', 2525),
@@ -114,5 +118,17 @@ return [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Mailpit (desenvolvimento)
+    |--------------------------------------------------------------------------
+    |
+    | URL da interface web do Mailpit para visualizar e-mails capturados
+    | em ambiente local ou Docker. Deixe vazio em produção.
+    |
+    */
+
+    'mailpit_ui_url' => env('MAILPIT_UI_URL'),
 
 ];

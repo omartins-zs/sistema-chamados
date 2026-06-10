@@ -96,6 +96,16 @@ services:
       - chamados
     restart: unless-stopped
 
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: chamados-mailpit
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - chamados
+    restart: unless-stopped
+
   redis:
     image: redis:7-alpine
     container_name: chamados-redis
