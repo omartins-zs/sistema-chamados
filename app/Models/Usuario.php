@@ -7,6 +7,8 @@ use Database\Factories\UsuarioFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -23,10 +25,10 @@ use Illuminate\Notifications\Notifiable;
  * @property bool $ativo
  * @property-read Setor|null $setor
  */
-class Usuario extends Authenticatable implements FilamentUser, HasName
+class Usuario extends Authenticatable implements CanResetPasswordContract, FilamentUser, HasName
 {
     /** @use HasFactory<UsuarioFactory> */
-    use HasFactory, Notifiable;
+    use CanResetPassword, HasFactory, Notifiable;
 
     protected $table = 'usuarios';
 
