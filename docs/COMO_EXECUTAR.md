@@ -2,10 +2,10 @@
 
 Escolha **um** guia conforme seu ambiente:
 
-| Guia | Quando usar |
-| --- | --- |
-| **[COMO_EXECUTAR_LOCAL.md](COMO_EXECUTAR_LOCAL.md)** | Laragon, XAMPP ou `php artisan serve` (MySQL local) |
-| **[COMO_EXECUTAR_DOCKER.md](COMO_EXECUTAR_DOCKER.md)** | Docker Desktop (MySQL + Redis + PHPMyAdmin) |
+| Guia | Quando usar | Requisitos no PC |
+| --- | --- | --- |
+| **[COMO_EXECUTAR_DOCKER.md](COMO_EXECUTAR_DOCKER.md)** | Qualquer máquina — só subir o sistema | **Docker Desktop** |
+| **[COMO_EXECUTAR_LOCAL.md](COMO_EXECUTAR_LOCAL.md)** | Desenvolver com Laragon / XAMPP | PHP, Composer, Node, MySQL |
 | [ACESSOS_TESTES.md](ACESSOS_TESTES.md) | Logins demo, URLs e fluxos de teste |
 
 ---

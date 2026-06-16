@@ -1,6 +1,8 @@
 # Como Executar Localmente — Sistema de Chamados
 
-Guia para rodar o projeto no **Laragon**, **XAMPP** ou com `php artisan serve`, usando **MySQL** local.
+Guia para rodar **sem Docker**, no **Laragon**, **XAMPP** ou com `php artisan serve`.
+
+> **Não quer instalar PHP, Composer ou Node?** Use [COMO_EXECUTAR_DOCKER.md](COMO_EXECUTAR_DOCKER.md) — basta Docker Desktop, em qualquer Windows, Mac ou Linux.
 
 ---
 

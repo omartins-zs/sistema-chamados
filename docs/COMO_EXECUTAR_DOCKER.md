@@ -1,17 +1,32 @@
 # Como Executar com Docker — Sistema de Chamados
 
-Guia para rodar o projeto com **Docker Desktop** no Windows, Linux ou macOS.
+Roda em **qualquer máquina** com [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows, macOS ou Linux).
+
+Os containers são **Linux** — o sistema operacional do seu PC não importa. Você **não precisa** instalar PHP, Composer, Node, MySQL ou Laragon no computador.
+
+---
+
+## Requisito
+
+| Ferramenta | Obrigatório? |
+| --- | --- |
+| **Docker Desktop** | Sim |
+| PHP / Composer / Node / Laragon | **Não** |
 
 ---
 
 ## Início rápido
 
 ```bash
+git clone <url-do-repositorio>
+cd sistema-chamados
 cp .env.example .env
 docker compose up -d --build
 ```
 
-O **build da imagem** instala Composer + NPM (só na 1ª vez ou quando o código mudar). Na subida, o container só roda **migrate + seed** — leva segundos.
+O `.env` é opcional no Docker — o compose já define banco, Redis e e-mail. Se não existir `.env`, o sistema sobe mesmo assim.
+
+Na **primeira vez**, o `docker build` instala dependências (cacheado depois). Na subida, só rodam migrate + seed (segundos).
 
 | Recurso | URL |
 | --- | --- |
@@ -22,8 +37,6 @@ O **build da imagem** instala Composer + NPM (só na 1ª vez ou quando o código
 
 Login admin: `admin@admin.com` / `password`
 
-> **Um único `.env`** serve para Laragon e Docker. O `docker-compose.yml` sobrescreve `DB_HOST`, `REDIS_*`, `MAIL_*` etc. — **não precisa editar o `.env` para Docker**.
-
 ---
 
 ## Containers
@@ -31,7 +44,7 @@ Login admin: `admin@admin.com` / `password`
 | Container | Porta | Função |
 | --- | --- | --- |
 | `chamados-nginx` | **8080** | Servidor web |
-| `chamados-app` | — | PHP 8.3-FPM |
+| `chamados-app` | — | PHP 8.3-FPM (Linux) |
 | `chamados-mysql` | **3308** | MySQL 8 |
 | `chamados-redis` | — | Cache, sessão e filas |
 | `chamados-mailpit` | **8025** | E-mails de teste |
@@ -57,16 +70,9 @@ Login admin: `admin@admin.com` / `password`
 docker compose ps
 docker compose logs -f app
 
-# Recriar banco
 docker compose exec app php artisan migrate:fresh --seed
-
-# Rebuild após mudar código PHP/JS
 docker compose up -d --build
-
-# Parar
 docker compose down
-
-# Parar e apagar banco
 docker compose down -v
 ```
 
@@ -77,17 +83,17 @@ docker compose down -v
 | Problema | Solução |
 | --- | --- |
 | Porta 8080 em uso | Altere `"8080:80"` no serviço `nginx` |
-| Página 502 | `docker compose logs app` — aguarde MySQL |
-| Sem `.env` | `copy .env.example .env` |
-| Banco com credenciais antigas | `docker compose down -v` e suba de novo |
-| Mudou código e não refletiu | `docker compose up -d --build` |
+| Página 502 | `docker compose logs app` — aguarde o MySQL |
+| Banco com dados antigos | `docker compose down -v` e suba de novo |
+| Mudou código | `docker compose up -d --build` |
+| Erro no build (`public/storage`) | `docker builder prune -f` e build de novo — o `.dockerignore` já ignora links do host |
 
 ---
 
-## Voltar para Laragon
+## Desenvolvimento com PHP/Node no PC
+
+Se quiser editar código com hot-reload, Laragon, Composer e Node, use o guia **[COMO_EXECUTAR_LOCAL.md](COMO_EXECUTAR_LOCAL.md)** — lá sim há requisitos de versão (PHP 8.3+, Composer, etc.).
 
 ```bash
 docker compose down
 ```
-
-Siga [COMO_EXECUTAR_LOCAL.md](COMO_EXECUTAR_LOCAL.md).
