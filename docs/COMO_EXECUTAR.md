@@ -36,10 +36,9 @@ php artisan queue:work
 ```bash
 cp .env.example .env
 docker compose up -d --build
-docker compose logs -f app
 ```
 
-→ http://localhost:8080 (bootstrap automático na primeira subida)
+→ http://localhost:8080
 
 ---
 

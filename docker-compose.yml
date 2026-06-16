@@ -1,11 +1,11 @@
 services:
-  init:
+  app:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    container_name: chamados-init
-    env_file:
-      - .env
+      target: app
+    container_name: chamados-app
+    env_file: .env
     environment: &app_env
       APP_URL: http://localhost:8080
       DB_HOST: mysql
@@ -23,56 +23,25 @@ services:
       MAIL_PORT: 1025
       MAILPIT_UI_URL: http://localhost:8025
     volumes:
-      - .:/var/www/html:delegated
+      - ./.env:/var/www/html/.env
+      - storage:/var/www/html/storage
     depends_on:
       mysql:
-        condition: service_healthy
-    restart: "no"
-    command: ["/usr/local/bin/bootstrap.sh"]
-    networks:
-      - chamados
-
-  nginx:
-    image: nginx:1.27-alpine
-    container_name: chamados-nginx
-    ports:
-      - "8080:80"
-    volumes:
-      - .:/var/www/html:delegated
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-    depends_on:
-      app:
         condition: service_healthy
     networks:
       - chamados
     restart: unless-stopped
 
-  app:
+  nginx:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    container_name: chamados-app
-    env_file:
-      - .env
-    environment:
-      <<: *app_env
-    volumes:
-      - .:/var/www/html:delegated
+      target: nginx
+    container_name: chamados-nginx
+    ports:
+      - "8080:80"
     depends_on:
-      init:
-        condition: service_completed_successfully
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_started
-      mailpit:
-        condition: service_started
-    healthcheck:
-      test: ["CMD-SHELL", "/usr/local/bin/healthcheck.sh"]
-      interval: 10s
-      timeout: 5s
-      retries: 6
-      start_period: 30s
+      - app
     networks:
       - chamados
     restart: unless-stopped
@@ -87,38 +56,22 @@ services:
       MYSQL_DATABASE: sistema_chamados
       MYSQL_USER: chamados
       MYSQL_PASSWORD: chamados
-    command:
-      - --innodb-buffer-pool-size=256M
-      - --innodb-log-file-size=64M
-      - --max-connections=100
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_unicode_ci
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 10
-      start_period: 30s
+      start_period: 20s
     networks:
       - chamados
     restart: unless-stopped
 
-  phpmyadmin:
-    image: phpmyadmin:5
-    container_name: chamados-phpmyadmin
-    ports:
-      - "8085:80"
-    environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3306
-      PMA_USER: chamados
-      PMA_PASSWORD: chamados
-      UPLOAD_LIMIT: 64M
-    depends_on:
-      mysql:
-        condition: service_healthy
+  redis:
+    image: redis:7-alpine
+    container_name: chamados-redis
     networks:
       - chamados
     restart: unless-stopped
@@ -133,62 +86,39 @@ services:
       - chamados
     restart: unless-stopped
 
-  redis:
-    image: redis:7-alpine
-    container_name: chamados-redis
-    ports:
-      - "6379:6379"
-    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru --save ""
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-    networks:
-      - chamados
-    restart: unless-stopped
-
   worker:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
+      target: app
     container_name: chamados-worker
-    env_file:
-      - .env
-    environment:
-      <<: *app_env
-    command: php artisan queue:work redis --tries=3 --timeout=90 --sleep=3
+    env_file: .env
+    environment: *app_env
+    command: php artisan queue:work redis --sleep=3 --tries=3
     volumes:
-      - .:/var/www/html:delegated
+      - ./.env:/var/www/html/.env
+      - storage:/var/www/html/storage
     depends_on:
-      init:
-        condition: service_completed_successfully
-      app:
-        condition: service_healthy
-    restart: unless-stopped
+      - app
     networks:
       - chamados
+    restart: unless-stopped
 
-  scheduler:
-    build:
-      context: .
-      dockerfile: docker/php/Dockerfile
-    container_name: chamados-scheduler
-    env_file:
-      - .env
+  phpmyadmin:
+    image: phpmyadmin:5
+    container_name: chamados-phpmyadmin
+    ports:
+      - "8085:80"
     environment:
-      <<: *app_env
-    command: php artisan schedule:work
-    volumes:
-      - .:/var/www/html:delegated
+      PMA_HOST: mysql
+      PMA_USER: chamados
+      PMA_PASSWORD: chamados
     depends_on:
-      init:
-        condition: service_completed_successfully
-      app:
+      mysql:
         condition: service_healthy
-    restart: unless-stopped
     networks:
       - chamados
+    restart: unless-stopped
 
 networks:
   chamados:
@@ -196,4 +126,4 @@ networks:
 
 volumes:
   mysql_data:
-    driver: local
+  storage:

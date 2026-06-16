@@ -213,7 +213,6 @@ php artisan queue:work
 ```bash
 cp .env.example .env
 docker compose up -d --build
-docker compose logs -f app
 ```
 
 → http://localhost:8080 · PHPMyAdmin: http://localhost:8085 · Mailpit: http://localhost:8025

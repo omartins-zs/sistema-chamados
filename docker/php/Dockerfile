@@ -1,48 +1,61 @@
-FROM php:8.3-fpm
+# -----------------------------------------------------------------------------
+# Base — PHP 8.3 + extensões Laravel
+# -----------------------------------------------------------------------------
+FROM php:8.3-fpm AS base
 
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip \
-    libzip-dev \
-    libicu-dev \
-    && docker-php-ext-install \
-        pdo_mysql \
-        mbstring \
-        exif \
-        pcntl \
-        bcmath \
-        gd \
-        zip \
-        opcache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git curl zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev libicu-dev \
+    && docker-php-ext-install -j$(nproc) pdo_mysql mbstring exif pcntl bcmath gd zip \
     && pecl install redis \
     && docker-php-ext-enable redis \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Configurações de performance
 COPY docker/php/local.ini /usr/local/etc/php/conf.d/99-local.ini
 COPY docker/php/fpm-performance.conf /usr/local/etc/php-fpm.d/zz-performance.conf
 
+# -----------------------------------------------------------------------------
+# Build — composer + vite (cache de camadas; roda só no docker build)
+# -----------------------------------------------------------------------------
+FROM base AS build
+
 WORKDIR /var/www/html
 
+COPY composer.json composer.lock ./
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+
+COPY . .
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader \
+    && npm run build
+
+# -----------------------------------------------------------------------------
+# App — PHP-FPM
+# -----------------------------------------------------------------------------
+FROM base AS app
+
+WORKDIR /var/www/html
+
+COPY --from=build /var/www/html /var/www/html
 COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
-COPY docker/scripts/start-app.sh /usr/local/bin/start-app.sh
-COPY docker/scripts/bootstrap.sh /usr/local/bin/bootstrap.sh
-COPY docker/scripts/healthcheck.sh /usr/local/bin/healthcheck.sh
-COPY docker/scripts/rebuild-cache.sh /usr/local/bin/rebuild-cache.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/start-app.sh /usr/local/bin/bootstrap.sh /usr/local/bin/healthcheck.sh /usr/local/bin/rebuild-cache.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh \
+    && mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["/usr/local/bin/start-app.sh"]
+CMD ["php-fpm", "-F"]
+
+# -----------------------------------------------------------------------------
+# Nginx — só os arquivos públicos
+# -----------------------------------------------------------------------------
+FROM nginx:1.27-alpine AS nginx
+
+COPY --from=build /var/www/html/public /var/www/html/public
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
