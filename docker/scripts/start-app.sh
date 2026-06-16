@@ -39,5 +39,8 @@ if [ "${DOCKER_WARM_CACHE:-true}" = "true" ]; then
     php artisan route:cache --no-interaction
 fi
 
+touch storage/app/.docker-ready
+echo "[start-app] Aplicação pronta (.docker-ready)."
+
 echo "[start-app] Subindo PHP-FPM..."
 exec php-fpm -F

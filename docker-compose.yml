@@ -51,11 +51,11 @@ services:
       mailpit:
         condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "php artisan db:show --no-interaction >/dev/null 2>&1"]
-      interval: 15s
-      timeout: 10s
-      retries: 10
-      start_period: 300s
+      test: ["CMD-SHELL", "test -f /var/www/html/storage/app/.docker-ready"]
+      interval: 20s
+      timeout: 5s
+      retries: 30
+      start_period: 900s
     networks:
       - chamados
     restart: unless-stopped

@@ -11,7 +11,7 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-Na **primeira execução**, o container `app` instala dependências, gera a chave, roda migrations/seeders e faz o build do Vite automaticamente (pode levar alguns minutos).
+Na **primeira execução**, o container `app` instala dependências, gera a chave, roda migrations/seeders e faz o build do Vite automaticamente. **Pode levar de 5 a 15 minutos** em PCs mais lentos ou na primeira vez — isso é normal.
 
 Acompanhe o progresso:
 
@@ -19,7 +19,7 @@ Acompanhe o progresso:
 docker compose logs -f app
 ```
 
-Quando aparecer `[start-app] Subindo PHP-FPM...`, acesse:
+Quando aparecer `[start-app] Aplicação pronta (.docker-ready).` e `[start-app] Subindo PHP-FPM...`, acesse:
 
 | Recurso | URL |
 | --- | --- |
@@ -120,6 +120,7 @@ docker compose exec app sh docker/scripts/bootstrap.sh
 
 | Problema | Solução |
 | --- | --- |
+| `chamados-app is unhealthy` / nginx/worker reiniciando | Aguarde até 15 min na 1ª subida: `docker compose logs -f app`. Se persistir: `docker compose down -v` e suba de novo (apaga banco). Confirme que existe `.env` (`cp .env.example .env`) |
 | Porta 8080 em uso | Altere em `docker-compose.yml`: `"8081:80"` e `APP_URL` no bloco `environment` do serviço `app` |
 | Página em branco / 502 | `docker compose logs app` — aguarde o bootstrap terminar |
 | Página sem CSS | `docker compose exec app npm run build` |
