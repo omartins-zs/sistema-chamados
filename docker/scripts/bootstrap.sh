@@ -1,5 +1,5 @@
 #!/bin/sh
-# Primeira inicialização dentro do container (composer, key, migrate, assets).
+# Executado uma vez pelo serviço init — composer, migrate, seed e build Vite.
 set -e
 
 cd /var/www/html
@@ -13,12 +13,14 @@ fi
 
 mkdir -p storage/app storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache
 
-echo "[bootstrap] Limpando caches antigos..."
-php artisan optimize:clear --no-interaction 2>/dev/null || rm -f bootstrap/cache/config.php bootstrap/cache/routes-v7.php 2>/dev/null || true
-
 echo "[bootstrap] Verificando dependências PHP..."
 if [ ! -f vendor/autoload.php ]; then
-    composer install --no-interaction --prefer-dist --optimize-autoloader
+    echo "[bootstrap] Executando composer install (1ª vez — pode demorar)..."
+    COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction --prefer-dist --optimize-autoloader \
+        || { echo "[bootstrap] ERRO: composer install falhou."; exit 1; }
+    echo "[bootstrap] Composer concluído."
+else
+    echo "[bootstrap] vendor/ já existe — pulando composer install."
 fi
 
 if grep -Eq '^APP_KEY=\s*$' .env 2>/dev/null; then
@@ -26,14 +28,16 @@ if grep -Eq '^APP_KEY=\s*$' .env 2>/dev/null; then
     php artisan key:generate --force --no-interaction
 fi
 
+echo "[bootstrap] Limpando caches..."
+php artisan optimize:clear --no-interaction 2>/dev/null || rm -f bootstrap/cache/config.php bootstrap/cache/routes-v7.php 2>/dev/null || true
+
 echo "[bootstrap] Aguardando MySQL..."
 tentativa=0
 until php artisan db:show --no-interaction >/dev/null 2>&1; do
     tentativa=$((tentativa + 1))
     if [ "$tentativa" -ge 60 ]; then
         echo "[bootstrap] ERRO: MySQL não respondeu."
-        echo "[bootstrap] Confira DB_HOST=mysql no container e credenciais chamados/chamados."
-        echo "[bootstrap] Se migrou de versão antiga do compose: docker compose down -v"
+        echo "[bootstrap] Rode: docker compose down -v && docker compose up -d --build"
         exit 1
     fi
     sleep 2
@@ -49,13 +53,19 @@ if [ ! -f storage/app/.docker-initialized ]; then
 fi
 
 if [ ! -f public/build/manifest.json ]; then
-    echo "[bootstrap] Instalando dependências Node e build Vite (pode demorar na 1ª vez)..."
+    echo "[bootstrap] Instalando Node e build Vite (1ª vez — pode demorar)..."
     if [ -f package-lock.json ]; then
-        npm ci --no-audit --no-fund
+        npm ci --no-audit --no-fund \
+            || { echo "[bootstrap] ERRO: npm ci falhou."; exit 1; }
     else
-        npm install --no-audit --no-fund
+        npm install --no-audit --no-fund \
+            || { echo "[bootstrap] ERRO: npm install falhou."; exit 1; }
     fi
-    npm run build
+    npm run build || { echo "[bootstrap] ERRO: npm run build falhou."; exit 1; }
+    echo "[bootstrap] Build Vite concluído."
+else
+    echo "[bootstrap] public/build/ já existe — pulando npm."
 fi
 
-echo "[bootstrap] Concluído."
+touch storage/app/.docker-ready
+echo "[bootstrap] Concluído — aplicação pronta."

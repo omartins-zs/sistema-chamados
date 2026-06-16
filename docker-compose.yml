@@ -1,4 +1,37 @@
 services:
+  init:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: chamados-init
+    env_file:
+      - .env
+    environment: &app_env
+      APP_URL: http://localhost:8080
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: sistema_chamados
+      DB_USERNAME: chamados
+      DB_PASSWORD: chamados
+      CACHE_STORE: redis
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      MAILPIT_UI_URL: http://localhost:8025
+    volumes:
+      - .:/var/www/html:delegated
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: "no"
+    command: ["/usr/local/bin/bootstrap.sh"]
+    networks:
+      - chamados
+
   nginx:
     image: nginx:1.27-alpine
     container_name: chamados-nginx
@@ -21,29 +54,14 @@ services:
     container_name: chamados-app
     env_file:
       - .env
-    environment: &app_env
-      APP_URL: http://localhost:8080
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_DATABASE: sistema_chamados
-      DB_USERNAME: chamados
-      DB_PASSWORD: chamados
-      CACHE_STORE: redis
-      SESSION_DRIVER: redis
-      QUEUE_CONNECTION: redis
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      MAIL_MAILER: smtp
-      MAIL_HOST: mailpit
-      MAIL_PORT: 1025
-      MAILPIT_UI_URL: http://localhost:8025
-      DOCKER_BOOTSTRAP: "true"
+    environment:
+      <<: *app_env
       DOCKER_WARM_CACHE: "true"
     volumes:
       - .:/var/www/html:delegated
-      - vendor_data:/var/www/html/vendor
-      - node_modules_data:/var/www/html/node_modules
     depends_on:
+      init:
+        condition: service_completed_successfully
       mysql:
         condition: service_healthy
       redis:
@@ -51,11 +69,11 @@ services:
       mailpit:
         condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "test -f /var/www/html/storage/app/.docker-ready"]
-      interval: 20s
+      test: ["CMD-SHELL", "pgrep php-fpm > /dev/null"]
+      interval: 10s
       timeout: 5s
-      retries: 30
-      start_period: 900s
+      retries: 6
+      start_period: 30s
     networks:
       - chamados
     restart: unless-stopped
@@ -140,13 +158,13 @@ services:
       - .env
     environment:
       <<: *app_env
-      DOCKER_BOOTSTRAP: "false"
       DOCKER_WARM_CACHE: "false"
     command: php artisan queue:work redis --tries=3 --timeout=90 --sleep=3
     volumes:
       - .:/var/www/html:delegated
-      - vendor_data:/var/www/html/vendor
     depends_on:
+      init:
+        condition: service_completed_successfully
       app:
         condition: service_healthy
     restart: unless-stopped
@@ -162,13 +180,13 @@ services:
       - .env
     environment:
       <<: *app_env
-      DOCKER_BOOTSTRAP: "false"
       DOCKER_WARM_CACHE: "false"
     command: php artisan schedule:work
     volumes:
       - .:/var/www/html:delegated
-      - vendor_data:/var/www/html/vendor
     depends_on:
+      init:
+        condition: service_completed_successfully
       app:
         condition: service_healthy
     restart: unless-stopped
@@ -181,8 +199,4 @@ networks:
 
 volumes:
   mysql_data:
-    driver: local
-  vendor_data:
-    driver: local
-  node_modules_data:
     driver: local

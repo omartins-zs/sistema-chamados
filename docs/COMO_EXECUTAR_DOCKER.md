@@ -11,15 +11,19 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-Na **primeira execução**, o container `app` instala dependências, gera a chave, roda migrations/seeders e faz o build do Vite automaticamente. **Pode levar de 5 a 15 minutos** em PCs mais lentos ou na primeira vez — isso é normal.
-
-Acompanhe o progresso:
+Na **primeira execução**, o container **`init`** instala dependências (Composer + NPM), roda migrations/seeders e faz o build do Vite. **Pode levar de 5 a 15 minutos** — acompanhe:
 
 ```bash
-docker compose logs -f app
+docker compose logs -f init
 ```
 
-Quando aparecer `[start-app] Aplicação pronta (.docker-ready).` e `[start-app] Subindo PHP-FPM...`, acesse:
+Quando aparecer `[bootstrap] Concluído — aplicação pronta.`, os demais containers sobem automaticamente.
+
+Se algo falhar, veja o erro completo:
+
+```bash
+docker compose logs init
+```
 
 | Recurso | URL |
 | --- | --- |
@@ -36,8 +40,9 @@ Quando aparecer `[start-app] Aplicação pronta (.docker-ready).` e `[start-app]
 
 | Container | Porta (host) | Função |
 | --- | --- | --- |
+| `chamados-init` | — | Bootstrap único (composer, migrate, npm build) |
 | `chamados-nginx` | **8080** | Servidor web |
-| `chamados-app` | — | PHP 8.3-FPM + bootstrap automático |
+| `chamados-app` | — | PHP 8.3-FPM |
 | `chamados-mysql` | **3308** | MySQL 8 |
 | `chamados-phpmyadmin` | **8085** | Interface MySQL |
 | `chamados-mailpit` | **8025** / **1025** | Caixa de e-mails de teste |
@@ -120,7 +125,7 @@ docker compose exec app sh docker/scripts/bootstrap.sh
 
 | Problema | Solução |
 | --- | --- |
-| `chamados-app is unhealthy` / nginx/worker reiniciando | Aguarde até 15 min na 1ª subida: `docker compose logs -f app`. Se persistir: `docker compose down -v` e suba de novo (apaga banco). Confirme que existe `.env` (`cp .env.example .env`) |
+| `chamados-app is unhealthy` / nginx/worker reiniciando | Veja `docker compose logs init` — aguarde o bootstrap terminar. Se falhar: `docker compose down -v`, confirme `.env` (`copy .env.example .env`) e `docker compose up -d --build` |
 | Porta 8080 em uso | Altere em `docker-compose.yml`: `"8081:80"` e `APP_URL` no bloco `environment` do serviço `app` |
 | Página em branco / 502 | `docker compose logs app` — aguarde o bootstrap terminar |
 | Página sem CSS | `docker compose exec app npm run build` |
