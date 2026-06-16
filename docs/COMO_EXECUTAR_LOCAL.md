@@ -6,15 +6,44 @@ Guia para rodar o projeto no **Laragon**, **XAMPP** ou com `php artisan serve`, 
 
 ## Requisitos
 
-| Ferramenta | Versão mínima |
-| --- | --- |
-| PHP | 8.3+ |
-| Composer | 2.x |
-| Node.js | 18+ |
-| MySQL | 8.0+ |
-| NPM | 9+ |
+Para rodar localmente, você **não precisa** de uma versão específica do Laragon nem instalar o Laravel globalmente.
+
+O essencial é **Composer** + **PHP** compatível — o framework entra no projeto com `composer install`.
+
+Laragon, XAMPP ou `php artisan serve` são apenas formas de subir o ambiente.
+
+| Ferramenta | Obrigatório? | Versão mínima |
+| --- | --- | --- |
+| **Composer** | Sim | 2.x |
+| **PHP** | Sim | 8.3+ |
+| **Node.js** | Sim (assets) | 18+ |
+| **NPM** | Sim (assets) | 9+ |
+| **MySQL** | Sim | 8.0+ |
 
 Extensões PHP necessárias: `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`, `ctype`, `json`, `bcmath`.
+
+### Ambiente de referência (máquina de desenvolvimento)
+
+Stack usada na elaboração deste projeto — **não é requisito fixo**, só referência do que já foi testado:
+
+| Ferramenta | Versão |
+| --- | --- |
+| **Laragon** | **6.0.0** |
+| PHP (via Laragon) | 8.4.6 |
+| Composer | 2.8.12 |
+| Laravel (no projeto) | 13.15.0 |
+| **Node.js** | **22.14.0+** |
+| **NPM** | **11.4.2+** |
+
+Para conferir no seu computador:
+
+```bash
+php -v
+php artisan --version
+composer --version
+node -v
+npm -v
+```
 
 ---
 
