@@ -21,18 +21,26 @@ services:
     container_name: chamados-app
     env_file:
       - .env
-    environment:
-      APP_ENV: local
-      APP_DEBUG: "false"
+    environment: &app_env
+      APP_URL: http://localhost:8080
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: sistema_chamados
+      DB_USERNAME: chamados
+      DB_PASSWORD: chamados
       CACHE_STORE: redis
       SESSION_DRIVER: redis
       QUEUE_CONNECTION: redis
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      MAILPIT_UI_URL: http://localhost:8025
+      DOCKER_BOOTSTRAP: "true"
       DOCKER_WARM_CACHE: "true"
     volumes:
       - .:/var/www/html:delegated
-      # Volumes nomeados — reduz I/O do bind mount no Windows (vendor/node_modules)
       - vendor_data:/var/www/html/vendor
       - node_modules_data:/var/www/html/node_modules
     depends_on:
@@ -40,12 +48,14 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+      mailpit:
+        condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "php -r 'exit(0);'"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 60s
+      test: ["CMD-SHELL", "php artisan db:show --no-interaction >/dev/null 2>&1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 300s
     networks:
       - chamados
     restart: unless-stopped
@@ -56,10 +66,10 @@ services:
     ports:
       - "3308:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: sistema_chamados
-      MYSQL_USER: root_docker
-      MYSQL_PASSWORD: password
+      MYSQL_USER: chamados
+      MYSQL_PASSWORD: chamados
     command:
       - --innodb-buffer-pool-size=256M
       - --innodb-log-file-size=64M
@@ -69,7 +79,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-ppassword"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -86,8 +96,8 @@ services:
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
-      PMA_USER: root_docker
-      PMA_PASSWORD: password
+      PMA_USER: chamados
+      PMA_PASSWORD: chamados
       UPLOAD_LIMIT: 64M
     depends_on:
       mysql:
@@ -129,10 +139,9 @@ services:
     env_file:
       - .env
     environment:
-      CACHE_STORE: redis
-      SESSION_DRIVER: redis
-      QUEUE_CONNECTION: redis
-      REDIS_HOST: redis
+      <<: *app_env
+      DOCKER_BOOTSTRAP: "false"
+      DOCKER_WARM_CACHE: "false"
     command: php artisan queue:work redis --tries=3 --timeout=90 --sleep=3
     volumes:
       - .:/var/www/html:delegated
@@ -140,10 +149,6 @@ services:
     depends_on:
       app:
         condition: service_healthy
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_started
     restart: unless-stopped
     networks:
       - chamados
@@ -156,10 +161,9 @@ services:
     env_file:
       - .env
     environment:
-      CACHE_STORE: redis
-      SESSION_DRIVER: redis
-      QUEUE_CONNECTION: redis
-      REDIS_HOST: redis
+      <<: *app_env
+      DOCKER_BOOTSTRAP: "false"
+      DOCKER_WARM_CACHE: "false"
     command: php artisan schedule:work
     volumes:
       - .:/var/www/html:delegated

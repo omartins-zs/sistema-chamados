@@ -39,8 +39,9 @@ WORKDIR /var/www/html
 
 COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY docker/scripts/start-app.sh /usr/local/bin/start-app.sh
+COPY docker/scripts/bootstrap.sh /usr/local/bin/bootstrap.sh
 COPY docker/scripts/rebuild-cache.sh /usr/local/bin/rebuild-cache.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/start-app.sh /usr/local/bin/rebuild-cache.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/start-app.sh /usr/local/bin/bootstrap.sh /usr/local/bin/rebuild-cache.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["/usr/local/bin/start-app.sh"]
