@@ -56,7 +56,6 @@ services:
       - .env
     environment:
       <<: *app_env
-      DOCKER_WARM_CACHE: "true"
     volumes:
       - .:/var/www/html:delegated
     depends_on:
@@ -69,7 +68,7 @@ services:
       mailpit:
         condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "pgrep php-fpm > /dev/null"]
+      test: ["CMD-SHELL", "/usr/local/bin/healthcheck.sh"]
       interval: 10s
       timeout: 5s
       retries: 6
@@ -158,7 +157,6 @@ services:
       - .env
     environment:
       <<: *app_env
-      DOCKER_WARM_CACHE: "false"
     command: php artisan queue:work redis --tries=3 --timeout=90 --sleep=3
     volumes:
       - .:/var/www/html:delegated
@@ -180,7 +178,6 @@ services:
       - .env
     environment:
       <<: *app_env
-      DOCKER_WARM_CACHE: "false"
     command: php artisan schedule:work
     volumes:
       - .:/var/www/html:delegated

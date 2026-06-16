@@ -68,4 +68,9 @@ else
 fi
 
 touch storage/app/.docker-ready
+
+echo "[bootstrap] Gerando caches..."
+php artisan config:cache --no-interaction
+php artisan route:cache --no-interaction
+
 echo "[bootstrap] Concluído — aplicação pronta."
