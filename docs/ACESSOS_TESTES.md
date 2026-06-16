@@ -154,8 +154,9 @@ Use esses protocolos para testar a **Consultar Chamado**.
 | PHPMyAdmin | http://localhost:8085 |
 | Host (externo) | 127.0.0.1:3308 |
 | Banco | sistema_chamados |
-| Usuário | root_docker |
-| Senha | password |
+| Usuário | chamados |
+| Senha | chamados |
+| Root | root / root |
 
 ---
 

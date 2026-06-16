@@ -40,19 +40,9 @@ No Laragon, crie o banco `sistema_chamados` pelo HeidiSQL ou:
 CREATE DATABASE sistema_chamados CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-No arquivo `.env`, use o bloco **LOCAL**:
+No arquivo `.env` (já vem pronto no `.env.example`):
 
 ```env
-APP_NAME="Sistema de Chamados"
-APP_ENV=local
-APP_DEBUG=true
-APP_URL=http://127.0.0.1:8000
-
-APP_LOCALE=pt_BR
-APP_FALLBACK_LOCALE=pt_BR
-APP_FAKER_LOCALE=pt_BR
-
-# LOCAL
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -61,8 +51,6 @@ DB_USERNAME=root
 DB_PASSWORD=
 
 QUEUE_CONNECTION=database
-
-# E-mail — padrão grava em storage/logs/laravel.log
 MAIL_MAILER=log
 ```
 

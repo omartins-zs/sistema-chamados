@@ -300,7 +300,7 @@ Este documento centraliza o acompanhamento das funcionalidades do sistema, separ
 - [x] Mailables implementam `ShouldQueue`
 - [x] Comando `php artisan queue:work` documentado
 - [x] Script `composer dev` inclui `queue:listen`
-- [x] Configuração SMTP documentada — variáveis `MAIL_*` em `.env.example` e `.env.docker.example`
+- [x] Configuração SMTP documentada — variáveis `MAIL_*` em `.env.example`
 - [x] Mailpit no `docker-compose.yml` para captura de e-mails em desenvolvimento (UI em `:8025`)
 - [x] Painel **Configurações** exibe driver SMTP, host/porta, remetente e link do Mailpit
 - [ ] Worker de fila configurado como serviço (Supervisor/systemd)

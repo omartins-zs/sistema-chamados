@@ -211,15 +211,12 @@ php artisan queue:work
 ### 🐳 Execução com Docker
 
 ```bash
-cp .env.docker.example .env
+cp .env.example .env
 docker compose up -d --build
-docker compose exec app composer install
-docker compose exec app php artisan key:generate
-docker compose exec app php artisan migrate --seed
-docker compose exec app npm install && npm run build
+docker compose logs -f app
 ```
 
-→ http://localhost:8080 · PHPMyAdmin: http://localhost:8085
+→ http://localhost:8080 · PHPMyAdmin: http://localhost:8085 · Mailpit: http://localhost:8025
 
 ### 🧪 Qualidade de Código
 

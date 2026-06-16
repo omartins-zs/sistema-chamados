@@ -34,15 +34,12 @@ php artisan queue:work
 ### Docker
 
 ```bash
-cp .env.docker.example .env
+cp .env.example .env
 docker compose up -d --build
-docker compose exec app composer install
-docker compose exec app php artisan key:generate
-docker compose exec app php artisan migrate --seed
-docker compose exec app npm install && npm run build
+docker compose logs -f app
 ```
 
-→ http://localhost:8080
+→ http://localhost:8080 (bootstrap automático na primeira subida)
 
 ---
 
